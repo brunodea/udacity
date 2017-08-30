@@ -24,7 +24,7 @@ public class TheMovieDBRest {
    }
 
     // API Key for accessing The Movie DB APIs.
-    private static String API_KEY = "a1fa1f5a047f3430c90c647fe1fcdf8d";
+    private static String API_KEY = "";
 
     private static AsyncHttpClient sClient = new AsyncHttpClient();
 
