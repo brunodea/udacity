@@ -5,7 +5,7 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_pop_movies"
-        android:scrollbars="vertical"
+        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </android.support.v7.widget.RecyclerView>
@@ -17,5 +17,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/tv_no_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:text="No internet connection."
+        android:textSize="22sp"
+        android:textColor="@android:color/darker_gray"/>
 
 </FrameLayout>

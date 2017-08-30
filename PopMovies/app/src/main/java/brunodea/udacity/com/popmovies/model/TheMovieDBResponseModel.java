@@ -1,65 +1,66 @@
 package brunodea.udacity.com.popmovies.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Generated;
+
+@Generated("com.robohorse.robopojogenerator")
 public class TheMovieDBResponseModel {
-    private int page;
-    private List<ResultModel> results;
-    private int total_results;
-    private int total_pages;
 
-    public TheMovieDBResponseModel() {
-        results = new ArrayList<ResultModel>();
-    }
+	@SerializedName("page")
+	private int page;
 
-    public int getPage() {
-        return page;
-    }
-    public List<ResultModel> getResults() {
-        return results;
-    }
-    public int getTotalResults() {
-        return total_results;
-    }
-    public int getTotalPages(){
-        return total_pages;
-    }
+	@SerializedName("total_pages")
+	private int totalPages;
 
-    public class ResultModel {
-        private String poster_path;
-        private boolean adult;
-        private String overview;
-        private String release_date;
-        private List<Integer> genre_ids;
-        private int id;
-        private String original_title;
-        private String original_language;
-        private String title;
-        private String backdrop_path;
-        private float popularity;
-        private int vote_count;
-        private boolean video;
-        private float vote_average;
+	@SerializedName("results")
+	private List<TheMovieDBResultModel> results;
 
-        public ResultModel() {
-            genre_ids = new ArrayList<Integer>();
-        }
+	@SerializedName("total_results")
+	private int totalResults;
 
-        public String getPosterPath() {
-            return poster_path;
-        }
-        // TODO: add all get methods.
-    }
-    public static ResultModel parseResultModelJSON(String json) {
-        Gson gson = new GsonBuilder().create();
-        return gson.fromJson(json, ResultModel.class);
-    }
-    public static TheMovieDBResponseModel parseJSON(String json) {
-        Gson gson = new GsonBuilder().create();
-        return gson.fromJson(json, TheMovieDBResponseModel.class);
-    }
+	public void setPage(int page){
+		this.page = page;
+	}
+
+	public int getPage(){
+		return page;
+	}
+
+	public void setTotalPages(int totalPages){
+		this.totalPages = totalPages;
+	}
+
+	public int getTotalPages(){
+		return totalPages;
+	}
+
+	public void setResults(List<TheMovieDBResultModel> results){
+		this.results = results;
+	}
+
+	public List<TheMovieDBResultModel> getResults(){
+		return results;
+	}
+
+	public void setTotalResults(int totalResults){
+		this.totalResults = totalResults;
+	}
+
+	public int getTotalResults(){
+		return totalResults;
+	}
+
+	@Override
+ 	public String toString(){
+		return 
+			"{" +
+			"page = '" + page + '\'' + 
+			",total_pages = '" + totalPages + '\'' + 
+			",results = '" + results + '\'' + 
+			",total_results = '" + totalResults + '\'' + 
+			"}";
+		}
 }
