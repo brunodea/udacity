@@ -16,12 +16,12 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import brunodea.udacity.com.popmovies.R;
 import brunodea.udacity.com.popmovies.TheMovieDBRest;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
+import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import cz.msebera.android.httpclient.Header;
 
 /**
@@ -36,31 +36,37 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     private static final String TAG = "TheMovieDBAdapter";
 
     private LayoutInflater mInflater;
-    private ArrayList<TheMovieDBResultModel> mListOfPosterHashes;
+    private TheMovieDBRest.SortBy mSortBy;
+
+    // TODO: create an interface instead of using the response model directly?
+    private TheMovieDBResponseModel mResponseModel;
     // current query page.
     private int mCurrentPage;
-    private int mMaxPages;
 
     public TheMovieDBAdapter(Context context) {
         mInflater = LayoutInflater.from(context);
-        mCurrentPage = 1;
-        mMaxPages = 0;
-        mListOfPosterHashes = new ArrayList<>();
+        mCurrentPage = 0;
+        mResponseModel = null;
+        mSortBy = null;
     }
 
     public void queryPosterHashes(final TheMovieDBRest.SortBy sortBy, final Handler query_handler) {
-        if (mMaxPages == 0 || mCurrentPage <= mMaxPages) {
+        if (mResponseModel == null || mCurrentPage <= mResponseModel.getTotalPages()) {
             Log.i(TAG, "Querying for Poster Hashes");
             query_handler.sendEmptyMessage(QUERY_MESSAGE_STARTED);
-            TheMovieDBRest.discover(mCurrentPage, sortBy, new JsonHttpResponseHandler() {
+            TheMovieDBRest.discover(mCurrentPage + 1, sortBy, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     Log.i(TAG, "Finished querying for poster hashes with success!");
                     mCurrentPage += 1;
+                    mSortBy = sortBy;
                     Gson gson = new Gson();
                     TheMovieDBResponseModel model = gson.fromJson(response.toString(), TheMovieDBResponseModel.class);
-                    mMaxPages = model.getTotalPages();
-                    mListOfPosterHashes.addAll(model.getResults());
+                    if (mResponseModel == null) {
+                        mResponseModel = model;
+                    } else {
+                        mResponseModel.addAll(model.getResults());
+                    }
                     query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_SUCCESS);
                 }
 
@@ -73,10 +79,16 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
         }
     }
 
-    public void clearList() {
-        mListOfPosterHashes.clear();
-        mCurrentPage = 1;
-        mMaxPages = 0;
+    public void reset() {
+        mCurrentPage = 0;
+        mResponseModel = null;
+        notifyDataSetChanged();
+    }
+    public TheMovieDBResponseModel getResponseModel() {
+        return mResponseModel;
+    }
+    public void setResponseModel(TheMovieDBResponseModel model) {
+        mResponseModel = model;
     }
 
     @Override
@@ -86,31 +98,31 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        TheMovieDBResultModel rm = mListOfPosterHashes.get(position);
-        Picasso.with(mInflater.getContext())
-                .load("http://image.tmdb.org/t/p/w185/"+rm.getPosterPath())
-                // TODO: add error image
-                //.error()
-                .into(holder.mIVMoviePoster);
-        // TODO: remove hardcoded text
-        String info = rm.getOriginalTitle() + "\nPopularity: " + String.valueOf(rm.getPopularity())
-                + "\nRating: " + String.valueOf(rm.getVoteAverage());
-        holder.mTVMovieTitle.setText(info);
+        if (mResponseModel != null) {
+            TheMovieDBResultModel rm = mResponseModel.getResults().get(position);
+            Picasso.with(mInflater.getContext())
+                    .load("http://image.tmdb.org/t/p/w185/" + rm.getPosterPath())
+                    // TODO: add error image
+                    //.error()
+                    .into(holder.mIVMoviePoster);
+            holder.mTVMovieTitle.setText(rm.getOriginalTitle());
+            holder.mTVPosition.setText(String.valueOf(position + 1));
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mListOfPosterHashes.size();
+        return mResponseModel == null ? 0 : mResponseModel.getResults().size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView mIVMoviePoster;
-        private TextView mTVMovieTitle;
+        @BindView(R.id.iv_movie_poster) ImageView mIVMoviePoster;
+        @BindView(R.id.tv_movie_title) TextView mTVMovieTitle;
+        @BindView(R.id.tv_position) TextView mTVPosition;
 
-        public ViewHolder(View item_view) {
+        ViewHolder(View item_view) {
             super(item_view);
-            mIVMoviePoster = (ImageView) item_view.findViewById(R.id.iv_movie_poster);
-            mTVMovieTitle = (TextView) item_view.findViewById(R.id.tv_movie_title);
+            ButterKnife.bind(this, item_view);
         }
     }
 }

@@ -1,6 +1,7 @@
 package brunodea.udacity.com.popmovies;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -20,19 +21,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
+import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 // TODO: use ButterKnife
 // https://docs.google.com/document/d/1ZlN1fUsCSKuInLECcJkslIqvpKlP7jWL2TP9m6UiA6I/pub?embedded=true
 // TODO: use Parcelables and onSaveInstanceState() instead of loading from the web everytime.
 public class MainActivity extends AppCompatActivity {
+    private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
 
-    private ProgressBar mPBLoadingMovies;
+    @BindView(R.id.pb_loading_movies) ProgressBar mPBLoadingMovies;
+    @BindView(R.id.tv_no_internet) TextView mTVNoInternetConnection;
+    @BindView(R.id.rv_pop_movies) RecyclerView mRVPopMovies;
 
-    private RecyclerView mRVPopMovies;
     private TheMovieDBAdapter mTheMovieDBAdapter;
     private RecyclerView.LayoutManager mRVLayoutManager;
     private Handler mQueryPosterHandler;
-    private TextView mTVNoInternetConnection;
 
     private TheMovieDBRest.SortBy mCurrSortBy;
 
@@ -40,18 +45,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         mCurrSortBy = TheMovieDBRest.SortBy.Popularity;
-        setupGUI();
-    }
-
-    private void setupGUI() {
-        mPBLoadingMovies = (ProgressBar) findViewById(R.id.pb_loading_movies);
-        // TODO: make the recyclerview horizontaly scrollable when the phone is rotated.
-        mRVPopMovies = (RecyclerView) findViewById(R.id.rv_pop_movies);
-
         mTheMovieDBAdapter = new TheMovieDBAdapter(this);
-        mTVNoInternetConnection = (TextView) findViewById(R.id.tv_no_internet);
-
         mQueryPosterHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
@@ -77,19 +73,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-
-        update_main_movies(true);
-
-        // TODO: do not use hardcoded text in layout.
-        if (mRVLayoutManager == null) {
-            mRVLayoutManager = new GridLayoutManager(this, 2);
-            mRVPopMovies.setLayoutManager(mRVLayoutManager);
+        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
+            mTheMovieDBAdapter.setResponseModel(
+                    (TheMovieDBResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
+            );
+        } else {
+            update_main_movies(false);
         }
-
+        // TODO: do not use hardcoded stuff in layout.
+        int num_cols = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
+                4 : 2;
+        mRVLayoutManager = new GridLayoutManager(this, num_cols);
+        mRVPopMovies.setLayoutManager(mRVLayoutManager);
         // TODO: make sure the recycleview has fixed size.
         mRVPopMovies.setHasFixedSize(true);
         mRVPopMovies.setAdapter(mTheMovieDBAdapter);
-        mRVPopMovies.setNestedScrollingEnabled(false);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY, mTheMovieDBAdapter.getResponseModel());
+        super.onSaveInstanceState(outState);
     }
 
     public boolean isOnline() {
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void update_main_movies(boolean append) {
         if (!append) {
-            mTheMovieDBAdapter.clearList();
+            mTheMovieDBAdapter.reset();
         }
 
         if (isOnline()) {

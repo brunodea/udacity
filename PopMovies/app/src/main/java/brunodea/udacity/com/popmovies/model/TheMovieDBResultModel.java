@@ -1,5 +1,8 @@
 package brunodea.udacity.com.popmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -7,7 +10,36 @@ import java.util.List;
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class TheMovieDBResultModel {
+public class TheMovieDBResultModel implements Parcelable {
+
+	TheMovieDBResultModel(Parcel in) {
+        // TODO: add all fields?
+        overview = in.readString();
+        originalTitle = in.readString();
+        popularity = in.readDouble();
+        voteAverage = in.readDouble();
+    }
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(overview);
+        parcel.writeString(originalTitle);
+        parcel.writeDouble(popularity);
+        parcel.writeDouble(voteAverage);
+    }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    static final Parcelable.Creator<TheMovieDBResultModel> CREATOR
+            = new Parcelable.Creator<TheMovieDBResultModel>() {
+        public TheMovieDBResultModel createFromParcel(Parcel in) {
+            return new TheMovieDBResultModel(in);
+        }
+        public TheMovieDBResultModel[] newArray(int size) {
+            return new TheMovieDBResultModel[size];
+        }
+    };
 
 	@SerializedName("overview")
 	private String overview;
@@ -182,5 +214,6 @@ public class TheMovieDBResultModel {
 			",adult = '" + adult + '\'' + 
 			",vote_count = '" + voteCount + '\'' + 
 			"}";
-		}
+	}
+
 }

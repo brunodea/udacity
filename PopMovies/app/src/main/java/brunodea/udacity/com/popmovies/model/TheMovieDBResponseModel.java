@@ -1,13 +1,50 @@
 package brunodea.udacity.com.popmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class TheMovieDBResponseModel {
+public class TheMovieDBResponseModel implements Parcelable {
+
+	TheMovieDBResponseModel(Parcel in) {
+		page = in.readInt();
+		totalPages = in.readInt();
+		results = new ArrayList<>();
+		in.readTypedList(results, TheMovieDBResultModel.CREATOR);
+        totalResults = in.readInt();
+	}
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeInt(page);
+        parcel.writeInt(totalPages);
+        parcel.writeTypedList(results);
+        parcel.writeInt(totalResults);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    static final Parcelable.Creator<TheMovieDBResponseModel> CREATOR
+            = new Parcelable.Creator<TheMovieDBResponseModel>() {
+        @Override
+        public TheMovieDBResponseModel createFromParcel(Parcel in) {
+            return new TheMovieDBResponseModel(in);
+        }
+        @Override
+        public TheMovieDBResponseModel[] newArray(int size) {
+            return new TheMovieDBResponseModel[size];
+        }
+    };
 
 	@SerializedName("page")
 	private int page;
@@ -45,6 +82,10 @@ public class TheMovieDBResponseModel {
 		return results;
 	}
 
+	public void addAll(List<TheMovieDBResultModel> newResults) {
+        this.results.addAll(newResults);
+    }
+
 	public void setTotalResults(int totalResults){
 		this.totalResults = totalResults;
 	}
@@ -62,5 +103,5 @@ public class TheMovieDBResponseModel {
 			",results = '" + results + '\'' + 
 			",total_results = '" + totalResults + '\'' + 
 			"}";
-		}
+	}
 }
