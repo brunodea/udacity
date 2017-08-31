@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PopMovies</string>
+    <string name="error_no_internet">No Internet Connection.</string>
+    <string name="error_downloading_info">Error downloading information.</string>
 </resources>

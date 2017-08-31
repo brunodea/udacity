@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
 
     @BindView(R.id.pb_loading_movies) ProgressBar mPBLoadingMovies;
-    @BindView(R.id.tv_no_internet) TextView mTVNoInternetConnection;
+    @BindView(R.id.tv_error) TextView mTVError;
     @BindView(R.id.rv_pop_movies) RecyclerView mRVPopMovies;
 
     private TheMovieDBAdapter mTheMovieDBAdapter;
@@ -58,12 +58,11 @@ public class MainActivity extends AppCompatActivity {
                     case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
                         mPBLoadingMovies.setVisibility(View.GONE);
                         mTheMovieDBAdapter.notifyDataSetChanged();
-                        mTVNoInternetConnection.setVisibility(View.GONE);
+                        mTVError.setVisibility(View.GONE);
                         break;
                     case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_ERROR:
-                        // TODO: rename textview to something related to "error"
-                        mTVNoInternetConnection.setText("Error loading movies.");
-                        mTVNoInternetConnection.setVisibility(View.VISIBLE);
+                        mTVError.setText(getResources().getText(R.string.error_downloading_info));
+                        mTVError.setVisibility(View.VISIBLE);
                         mPBLoadingMovies.setVisibility(View.GONE);
                         break;
                     default:
@@ -109,9 +108,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (isOnline()) {
             mTheMovieDBAdapter.queryPosterHashes(mCurrSortBy, mQueryPosterHandler);
-            mTVNoInternetConnection.setVisibility(View.GONE);
+            mTVError.setVisibility(View.GONE);
         } else {
-            mTVNoInternetConnection.setVisibility(View.VISIBLE);
+            mTVError.setVisibility(View.VISIBLE);
         }
     }
 

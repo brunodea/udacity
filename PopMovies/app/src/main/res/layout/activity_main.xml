@@ -19,12 +19,12 @@
         android:layout_gravity="center"/>
 
     <TextView
-        android:id="@+id/tv_no_internet"
+        android:id="@+id/tv_error"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:text="No internet connection."
+        android:text="@string/error_no_internet"
         android:textSize="22sp"
         android:textColor="@android:color/darker_gray"/>
 
