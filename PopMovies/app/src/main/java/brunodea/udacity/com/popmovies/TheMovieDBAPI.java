@@ -28,9 +28,6 @@ public class TheMovieDBAPI {
     @StringDef({ IMAGE_W185, IMAGE_W780 })
     public @interface ImageW {}
 
-    // API Key for accessing The Movie DB APIs.
-    private static String API_KEY = BuildConfig.API_KEY;
-
     private static AsyncHttpClient sClient = new AsyncHttpClient();
 
     public static void discover(int page, @SortByDef String sortBy, AsyncHttpResponseHandler handler) {
@@ -59,7 +56,7 @@ public class TheMovieDBAPI {
         builder.scheme("https")
                 .authority("api.themoviedb.org")
                 .appendPath("3")
-                .appendQueryParameter("api_key", API_KEY);
+                .appendQueryParameter("api_key", BuildConfig.API_KEY);
         return builder;
     }
 }

@@ -8,4 +8,6 @@
     <string name="movie_poster_descr">Movie poster description.</string>
     <string name="release_date"><![CDATA[<b>Release Date:</b> %s]]></string>
     <string name="original_title"><![CDATA[<b>Original Title:</b> %s]]></string>
+    <string name="popularity">Popularity</string>
+    <string name="rating">Rating</string>
 </resources>

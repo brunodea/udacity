@@ -37,7 +37,6 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     private static final String TAG = "TheMovieDBAdapter";
 
     private LayoutInflater mInflater;
-    private @TheMovieDBAPI.SortByDef String mSortBy;
 
     private TheMovieDBResponseModel mResponseModel;
     // current query page.
@@ -47,7 +46,6 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
         mInflater = LayoutInflater.from(context);
         mCurrentPage = 0;
         mResponseModel = null;
-        mSortBy = null;
     }
 
     public void queryPosterHashes(final @TheMovieDBAPI.SortByDef String sortBy, final Handler query_handler) {
@@ -59,7 +57,6 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     Log.i(TAG, "Finished querying for poster hashes with success!");
                     mCurrentPage += 1;
-                    mSortBy = sortBy;
                     Gson gson = new Gson();
                     TheMovieDBResponseModel model = gson.fromJson(response.toString(), TheMovieDBResponseModel.class);
                     if (mResponseModel == null) {

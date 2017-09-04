@@ -12,7 +12,7 @@ import javax.annotation.Generated;
 @Generated("com.robohorse.robopojogenerator")
 public class TheMovieDBResultModel implements Parcelable {
 
-	TheMovieDBResultModel(Parcel in) {
+	public TheMovieDBResultModel(Parcel in) {
         overview = in.readString();
         originalTitle = in.readString();
         popularity = in.readDouble();

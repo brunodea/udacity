@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.swiperefresh) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private TheMovieDBAdapter mTheMovieDBAdapter;
-    private RecyclerView.LayoutManager mRVLayoutManager;
     private Handler mQueryPosterHandler;
 
     private @TheMovieDBAPI.SortByDef String mCurrSortBy;
@@ -54,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                update_main_movies(false);
+                update_main_movies();
             }
         });
         mQueryPosterHandler = new Handler(Looper.getMainLooper()) {
@@ -87,13 +86,12 @@ public class MainActivity extends AppCompatActivity {
                     (TheMovieDBResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
             );
         } else {
-            update_main_movies(false);
+            update_main_movies();
         }
 
         int num_cols = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                 COLUMNS_LANDSCAPE : COLUMNS_PORTRAIT;
-        mRVLayoutManager = new GridLayoutManager(this, num_cols);
-        mRVPopMovies.setLayoutManager(mRVLayoutManager);
+        mRVPopMovies.setLayoutManager(new GridLayoutManager(this, num_cols));
         mRVPopMovies.setHasFixedSize(true);
         mRVPopMovies.setAdapter(mTheMovieDBAdapter);
     }
@@ -110,11 +108,8 @@ public class MainActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnected();
     }
 
-    private void update_main_movies(boolean append) {
-        if (!append) {
-            mTheMovieDBAdapter.reset();
-        }
-
+    private void update_main_movies() {
+        mTheMovieDBAdapter.reset();
         if (isOnline()) {
             mTheMovieDBAdapter.queryPosterHashes(mCurrSortBy, mQueryPosterHandler);
             mTVError.setVisibility(View.GONE);
@@ -154,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         if (!mCurrSortBy.equals(last_sort_by)) {
-                            update_main_movies(false);
+                            update_main_movies();
                         }
                         return true;
                     }
@@ -166,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.action_refresh: {
                 //mSwipeRefreshLayout.setRefreshing(true);
-                update_main_movies(false);
+                update_main_movies();
                 return true;
             }
             default: {
