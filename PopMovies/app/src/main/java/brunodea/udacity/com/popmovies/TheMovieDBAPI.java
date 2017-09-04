@@ -29,7 +29,7 @@ public class TheMovieDBAPI {
     public @interface ImageW {}
 
     // API Key for accessing The Movie DB APIs.
-    private static String API_KEY = "";
+    private static String API_KEY = BuildConfig.API_KEY;
 
     private static AsyncHttpClient sClient = new AsyncHttpClient();
 
