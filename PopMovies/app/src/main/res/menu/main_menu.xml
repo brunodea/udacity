@@ -9,5 +9,5 @@
     <item
         android:id="@+id/action_sortby"
         android:title="@string/sort_by"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 </menu>

@@ -33,6 +33,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
 
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(RESULT_MODEL_EXTRA)) {

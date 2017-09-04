@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         String last_sort_by = mCurrSortBy;
                         switch (item.getItemId()) {
                             case R.id.action_sortby_popularity: {
+                                mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
                                 break;
                             }
                             case R.id.action_sortby_rating: {
