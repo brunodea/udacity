@@ -13,11 +13,14 @@ import javax.annotation.Generated;
 public class TheMovieDBResultModel implements Parcelable {
 
 	TheMovieDBResultModel(Parcel in) {
-        // TODO: add all fields?
         overview = in.readString();
         originalTitle = in.readString();
         popularity = in.readDouble();
         voteAverage = in.readDouble();
+		posterPath = in.readString();
+        backdropPath = in.readString();
+        releaseDate = in.readString();
+		title = in.readString();
     }
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
@@ -25,6 +28,10 @@ public class TheMovieDBResultModel implements Parcelable {
         parcel.writeString(originalTitle);
         parcel.writeDouble(popularity);
         parcel.writeDouble(voteAverage);
+		parcel.writeString(posterPath);
+        parcel.writeString(backdropPath);
+        parcel.writeString(releaseDate);
+		parcel.writeString(title);
     }
     @Override
     public int describeContents() {

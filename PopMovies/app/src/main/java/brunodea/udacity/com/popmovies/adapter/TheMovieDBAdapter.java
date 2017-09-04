@@ -1,6 +1,7 @@
 package brunodea.udacity.com.popmovies.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,12 +13,12 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
+import brunodea.udacity.com.popmovies.MovieDetailsActivity;
 import brunodea.udacity.com.popmovies.R;
-import brunodea.udacity.com.popmovies.TheMovieDBRest;
+import brunodea.udacity.com.popmovies.TheMovieDBAPI;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
 import butterknife.BindView;
@@ -36,9 +37,8 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     private static final String TAG = "TheMovieDBAdapter";
 
     private LayoutInflater mInflater;
-    private TheMovieDBRest.SortBy mSortBy;
+    private @TheMovieDBAPI.SortByDef String mSortBy;
 
-    // TODO: create an interface instead of using the response model directly?
     private TheMovieDBResponseModel mResponseModel;
     // current query page.
     private int mCurrentPage;
@@ -50,11 +50,11 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
         mSortBy = null;
     }
 
-    public void queryPosterHashes(final TheMovieDBRest.SortBy sortBy, final Handler query_handler) {
+    public void queryPosterHashes(final @TheMovieDBAPI.SortByDef String sortBy, final Handler query_handler) {
         if (mResponseModel == null || mCurrentPage <= mResponseModel.getTotalPages()) {
             Log.i(TAG, "Querying for Poster Hashes");
             query_handler.sendEmptyMessage(QUERY_MESSAGE_STARTED);
-            TheMovieDBRest.discover(mCurrentPage + 1, sortBy, new JsonHttpResponseHandler() {
+            TheMovieDBAPI.discover(mCurrentPage + 1, sortBy, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     Log.i(TAG, "Finished querying for poster hashes with success!");
@@ -99,14 +99,23 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mResponseModel != null) {
-            TheMovieDBResultModel rm = mResponseModel.getResults().get(position);
-            Picasso.with(mInflater.getContext())
-                    .load("http://image.tmdb.org/t/p/w185/" + rm.getPosterPath())
-                    // TODO: add error image
-                    //.error()
-                    .into(holder.mIVMoviePoster);
+            final TheMovieDBResultModel rm = mResponseModel.getResults().get(position);
+            TheMovieDBAPI.downloadImageToView(
+                mInflater.getContext(),
+                holder.mIVMoviePoster,
+                TheMovieDBAPI.IMAGE_W185,
+                rm.getPosterPath()
+            );
             holder.mTVMovieTitle.setText(rm.getOriginalTitle());
             holder.mTVPosition.setText(String.valueOf(position + 1));
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mInflater.getContext(), MovieDetailsActivity.class);
+                    intent.putExtra(MovieDetailsActivity.RESULT_MODEL_EXTRA, rm);
+                    mInflater.getContext().startActivity(intent);
+                }
+            });
         }
     }
 

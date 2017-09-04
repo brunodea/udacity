@@ -1,5 +1,11 @@
 <resources>
     <string name="app_name">PopMovies</string>
+    <string name="details_activity_label">Movie Details</string>
     <string name="error_no_internet">No Internet Connection.</string>
     <string name="error_downloading_info">Error downloading information.</string>
+    <string name="sort_by">Sort By</string>
+    <string name="refresh">Refresh</string>
+    <string name="movie_poster_descr">Movie poster description.</string>
+    <string name="release_date"><![CDATA[<b>Release Date:</b> %s]]></string>
+    <string name="original_title"><![CDATA[<b>Original Title:</b> %s]]></string>
 </resources>

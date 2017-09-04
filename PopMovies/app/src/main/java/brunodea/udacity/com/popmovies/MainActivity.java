@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.PopupMenu;
@@ -25,32 +26,41 @@ import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-// TODO: use ButterKnife
-// https://docs.google.com/document/d/1ZlN1fUsCSKuInLECcJkslIqvpKlP7jWL2TP9m6UiA6I/pub?embedded=true
-// TODO: use Parcelables and onSaveInstanceState() instead of loading from the web everytime.
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
+    
+    private static final int COLUMNS_LANDSCAPE = 4;
+    private static final int COLUMNS_PORTRAIT = 2;
 
     @BindView(R.id.pb_loading_movies) ProgressBar mPBLoadingMovies;
     @BindView(R.id.tv_error) TextView mTVError;
     @BindView(R.id.rv_pop_movies) RecyclerView mRVPopMovies;
+    @BindView(R.id.swiperefresh) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private TheMovieDBAdapter mTheMovieDBAdapter;
     private RecyclerView.LayoutManager mRVLayoutManager;
     private Handler mQueryPosterHandler;
 
-    private TheMovieDBRest.SortBy mCurrSortBy;
+    private @TheMovieDBAPI.SortByDef String mCurrSortBy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mCurrSortBy = TheMovieDBRest.SortBy.Popularity;
+        mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
         mTheMovieDBAdapter = new TheMovieDBAdapter(this);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                update_main_movies(false);
+            }
+        });
         mQueryPosterHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message inputMessage) {
+                mSwipeRefreshLayout.setRefreshing(false);
                 switch (inputMessage.what) {
                     case TheMovieDBAdapter.QUERY_MESSAGE_STARTED:
                         mPBLoadingMovies.setVisibility(View.VISIBLE);
@@ -66,8 +76,8 @@ public class MainActivity extends AppCompatActivity {
                         mPBLoadingMovies.setVisibility(View.GONE);
                         break;
                     default:
-                        // TODO
-                        Log.e("", "shouldn't be here!");
+                        //unreachable!
+                        Log.e(TAG, "Reached invalid place in code.");
                         break;
                 }
             }
@@ -79,12 +89,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             update_main_movies(false);
         }
-        // TODO: do not use hardcoded stuff in layout.
+
         int num_cols = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
-                4 : 2;
+                COLUMNS_LANDSCAPE : COLUMNS_PORTRAIT;
         mRVLayoutManager = new GridLayoutManager(this, num_cols);
         mRVPopMovies.setLayoutManager(mRVLayoutManager);
-        // TODO: make sure the recycleview has fixed size.
         mRVPopMovies.setHasFixedSize(true);
         mRVPopMovies.setAdapter(mTheMovieDBAdapter);
     }
@@ -110,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
             mTheMovieDBAdapter.queryPosterHashes(mCurrSortBy, mQueryPosterHandler);
             mTVError.setVisibility(View.GONE);
         } else {
+            mTVError.setText(R.string.error_no_internet);
             mTVError.setVisibility(View.VISIBLE);
         }
     }
@@ -129,21 +139,20 @@ public class MainActivity extends AppCompatActivity {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        TheMovieDBRest.SortBy last_sort_by = mCurrSortBy;
+                        String last_sort_by = mCurrSortBy;
                         switch (item.getItemId()) {
                             case R.id.action_sortby_popularity: {
-                                mCurrSortBy = TheMovieDBRest.SortBy.Popularity;
                                 break;
                             }
                             case R.id.action_sortby_rating: {
-                                mCurrSortBy = TheMovieDBRest.SortBy.Rating;
+                                mCurrSortBy = TheMovieDBAPI.SORTBY_RATING;
                                 break;
                             }
                             default: {
                                 return false;
                             }
                         }
-                        if (mCurrSortBy != last_sort_by) {
+                        if (!mCurrSortBy.equals(last_sort_by)) {
                             update_main_movies(false);
                         }
                         return true;
@@ -152,6 +161,11 @@ public class MainActivity extends AppCompatActivity {
                 MenuInflater inflater = popupMenu.getMenuInflater();
                 inflater.inflate(R.menu.sort_by_menu, popupMenu.getMenu());
                 popupMenu.show();
+                return true;
+            }
+            case R.id.action_refresh: {
+                //mSwipeRefreshLayout.setRefreshing(true);
+                update_main_movies(false);
                 return true;
             }
             default: {

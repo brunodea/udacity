@@ -17,7 +17,7 @@
         android:layout_height="match_parent">
 
         <ImageView android:id="@+id/iv_movie_poster"
-            android:contentDescription="Movie poster."
+            android:contentDescription="@string/movie_poster_descr"
             android:layout_gravity="center"
             android:foregroundGravity="top"
             android:layout_width="match_parent"
