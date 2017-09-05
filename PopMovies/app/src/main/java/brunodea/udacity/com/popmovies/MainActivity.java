@@ -1,6 +1,7 @@
 package brunodea.udacity.com.popmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
+import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -49,7 +51,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
-        mTheMovieDBAdapter = new TheMovieDBAdapter(this);
+        mTheMovieDBAdapter = new TheMovieDBAdapter(this, new TheMovieDBAdapter.OnItemClickListener() {
+            @Override
+            public void OnItemClick(TheMovieDBResultModel model) {
+                Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
+                intent.putExtra(MovieDetailsActivity.RESULT_MODEL_EXTRA, model);
+                startActivity(intent);
+            }
+        });
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

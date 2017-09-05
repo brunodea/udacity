@@ -1,7 +1,6 @@
 package brunodea.udacity.com.popmovies.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,7 +15,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 
-import brunodea.udacity.com.popmovies.MovieDetailsActivity;
 import brunodea.udacity.com.popmovies.R;
 import brunodea.udacity.com.popmovies.TheMovieDBAPI;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
@@ -41,11 +39,13 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     private TheMovieDBResponseModel mResponseModel;
     // current query page.
     private int mCurrentPage;
+    private OnItemClickListener mOnItemClickListener;
 
-    public TheMovieDBAdapter(Context context) {
+    public TheMovieDBAdapter(Context context, OnItemClickListener itemClickListener) {
         mInflater = LayoutInflater.from(context);
         mCurrentPage = 0;
         mResponseModel = null;
+        mOnItemClickListener = itemClickListener;
     }
 
     public void queryPosterHashes(final @TheMovieDBAPI.SortByDef String sortBy, final Handler query_handler) {
@@ -108,9 +108,9 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mInflater.getContext(), MovieDetailsActivity.class);
-                    intent.putExtra(MovieDetailsActivity.RESULT_MODEL_EXTRA, rm);
-                    mInflater.getContext().startActivity(intent);
+                if (mOnItemClickListener != null) {
+                    mOnItemClickListener.OnItemClick(rm);
+                }
                 }
             });
         }
@@ -130,5 +130,9 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
             super(item_view);
             ButterKnife.bind(this, item_view);
         }
+    }
+
+    public interface OnItemClickListener {
+        void OnItemClick(final TheMovieDBResultModel model);
     }
 }
