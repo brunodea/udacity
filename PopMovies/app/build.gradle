@@ -38,6 +38,8 @@ dependencies {
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'com.android.support:design:26.+'
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

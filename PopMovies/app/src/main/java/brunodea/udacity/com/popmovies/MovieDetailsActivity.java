@@ -14,6 +14,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

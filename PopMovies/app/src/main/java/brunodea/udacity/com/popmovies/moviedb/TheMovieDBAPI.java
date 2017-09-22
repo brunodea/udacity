@@ -1,23 +1,34 @@
-package brunodea.udacity.com.popmovies;
+package brunodea.udacity.com.popmovies.moviedb;
 
 import android.content.Context;
-import android.net.Uri;
 import android.support.annotation.StringDef;
 import android.widget.ImageView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import brunodea.udacity.com.popmovies.BuildConfig;
+import brunodea.udacity.com.popmovies.R;
+import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 /**
  * Utility for dealing with requests to The Movie DB API.
  */
 public class TheMovieDBAPI {
+    private static final String BASE_URL = "https://api.themoviedb.org/3/";
+
     public static final String SORTBY_POPULARITY = "popular";
     public static final String SORTBY_RATING = "top_rated";
+
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({ SORTBY_POPULARITY, SORTBY_RATING })
     public @interface SortByDef {}
@@ -30,14 +41,18 @@ public class TheMovieDBAPI {
 
     private static AsyncHttpClient sClient = new AsyncHttpClient();
 
-    public static void discover(int page, @SortByDef String sortBy, AsyncHttpResponseHandler handler) {
-        Uri.Builder builder = baseRequestURLBuilder();
-        builder
-                .appendPath("movie")
-                .appendPath(sortBy)
-                .appendQueryParameter("page", String.valueOf(page));
-        String final_url = builder.build().toString();
-        http_get(final_url, handler);
+    public static void getMovies(final int page, @SortByDef String sortBy, final Callback<TheMovieDBResponseModel> callback) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        TheMovieDBAPIInterface movie_db = retrofit.create(TheMovieDBAPIInterface.class);
+        Call<TheMovieDBResponseModel> call = movie_db.getSortedMovies(sortBy, page, BuildConfig.API_KEY);
+        call.enqueue(callback);
     }
 
     public static void downloadImageToView(Context context, ImageView imageView, @ImageW String imageW, String imagePath) {
@@ -45,18 +60,5 @@ public class TheMovieDBAPI {
                 .load("http://image.tmdb.org/t/p/"+imageW+"/"+imagePath)
                 .error(R.mipmap.broken_image)
                 .into(imageView);
-    }
-
-    private static void http_get(String urlWithParams, AsyncHttpResponseHandler handler) {
-        sClient.get(urlWithParams, handler);
-    }
-
-    private static Uri.Builder baseRequestURLBuilder() {
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("https")
-                .authority("api.themoviedb.org")
-                .appendPath("3")
-                .appendQueryParameter("api_key", BuildConfig.API_KEY);
-        return builder;
     }
 }

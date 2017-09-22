@@ -26,6 +26,7 @@ import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
 import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

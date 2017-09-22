@@ -11,18 +11,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
-import org.json.JSONObject;
-
 import brunodea.udacity.com.popmovies.R;
-import brunodea.udacity.com.popmovies.TheMovieDBAPI;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import cz.msebera.android.httpclient.Header;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Adapter class to be used by some RecyclerView.
@@ -50,27 +47,30 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
         if (mResponseModel == null || page <= mResponseModel.getTotalPages()) {
             Log.i(TAG, "Querying for Poster Hashes");
             query_handler.sendEmptyMessage(QUERY_MESSAGE_STARTED);
-            TheMovieDBAPI.discover(page, sortBy, new JsonHttpResponseHandler() {
+
+            TheMovieDBAPI.getMovies(page, sortBy, new Callback<TheMovieDBResponseModel>() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.i(TAG, "Finished querying for poster hashes with success!");
-                    Gson gson = new Gson();
-                    TheMovieDBResponseModel model = gson.fromJson(response.toString(), TheMovieDBResponseModel.class);
-                    if (mResponseModel == null) {
-                        mResponseModel = model;
+                public void onResponse(Call<TheMovieDBResponseModel> call, Response<TheMovieDBResponseModel> response) {
+                    if (response.isSuccessful()) {
+                        TheMovieDBResponseModel model = response.body();
+                        if (mResponseModel == null) {
+                            mResponseModel = model;
+                        } else {
+                            mResponseModel.addAll(model.getResults());
+                        }
+                        Message msg = query_handler.obtainMessage();
+                        msg.what = QUERY_MESSAGE_FINISHED_WITH_SUCCESS;
+                        msg.arg1 = page;
+                        msg.arg2 = model.getResults().size();
+                        query_handler.sendMessage(msg);
                     } else {
-                        mResponseModel.addAll(model.getResults());
+                        query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                     }
-                    Message msg = query_handler.obtainMessage();
-                    msg.what = QUERY_MESSAGE_FINISHED_WITH_SUCCESS;
-                    msg.arg1 = page;
-                    msg.arg2 = model.getResults().size();
-                    query_handler.sendMessage(msg);
                 }
 
                 @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.i(TAG, "Finished querying for poster hashes with failure: " + errorResponse.toString());
+                public void onFailure(Call<TheMovieDBResponseModel> call, Throwable t) {
+                    Log.e(TAG, t.toString());
                     query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                 }
             });
