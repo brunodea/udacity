@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
 import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
 import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TheMovieDBAdapter mTheMovieDBAdapter;
     private Handler mQueryPosterHandler;
+    private EndlessRecyclerViewScrollListener mEndlessScrollListener;
 
     private @TheMovieDBAPI.SortByDef String mCurrSortBy;
 
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                update_main_movies();
+                reset_movie_list();
             }
         });
         mQueryPosterHandler = new Handler(Looper.getMainLooper()) {
@@ -74,7 +76,12 @@ public class MainActivity extends AppCompatActivity {
                         mPBLoadingMovies.setVisibility(View.VISIBLE);
                         break;
                     case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
+                        // msg.arg1 = page, msg.arg2 = item_count
                         mPBLoadingMovies.setVisibility(View.GONE);
+                        mTheMovieDBAdapter.notifyItemRangeChanged(
+                                (inputMessage.arg1-1)*inputMessage.arg2,
+                                inputMessage.arg2
+                        );
                         mTheMovieDBAdapter.notifyDataSetChanged();
                         mTVError.setVisibility(View.GONE);
                         break;
@@ -95,12 +102,20 @@ public class MainActivity extends AppCompatActivity {
                     (TheMovieDBResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
             );
         } else {
-            update_main_movies();
+            load_more_movies(1);
         }
 
         int num_cols = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                 COLUMNS_LANDSCAPE : COLUMNS_PORTRAIT;
-        mRVPopMovies.setLayoutManager(new GridLayoutManager(this, num_cols));
+        GridLayoutManager grid = new GridLayoutManager(this, num_cols);
+        mEndlessScrollListener = new EndlessRecyclerViewScrollListener(grid) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                load_more_movies(page + 1);
+            }
+        };
+        mRVPopMovies.addOnScrollListener(mEndlessScrollListener);
+        mRVPopMovies.setLayoutManager(grid);
         mRVPopMovies.setHasFixedSize(true);
         mRVPopMovies.setAdapter(mTheMovieDBAdapter);
     }
@@ -117,15 +132,19 @@ public class MainActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnected();
     }
 
-    private void update_main_movies() {
-        mTheMovieDBAdapter.reset();
+    private void load_more_movies(int page) {
         if (isOnline()) {
-            mTheMovieDBAdapter.queryPosterHashes(mCurrSortBy, mQueryPosterHandler);
+            mTheMovieDBAdapter.queryPosterHashes(page, mCurrSortBy, mQueryPosterHandler);
             mTVError.setVisibility(View.GONE);
         } else {
             mTVError.setText(R.string.error_no_internet);
             mTVError.setVisibility(View.VISIBLE);
         }
+    }
+    private void reset_movie_list() {
+        mTheMovieDBAdapter.reset();
+        mEndlessScrollListener.resetState();
+        load_more_movies(1);
     }
 
     @Override
@@ -158,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         if (!mCurrSortBy.equals(last_sort_by)) {
-                            update_main_movies();
+                            reset_movie_list();
                         }
                         return true;
                     }
@@ -170,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.action_refresh: {
                 //mSwipeRefreshLayout.setRefreshing(true);
-                update_main_movies();
+                reset_movie_list();
                 return true;
             }
             default: {

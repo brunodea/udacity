@@ -2,6 +2,7 @@ package brunodea.udacity.com.popmovies.adapter;
 
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,26 +38,22 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     private LayoutInflater mInflater;
 
     private TheMovieDBResponseModel mResponseModel;
-    // current query page.
-    private int mCurrentPage;
     private OnItemClickListener mOnItemClickListener;
 
     public TheMovieDBAdapter(Context context, OnItemClickListener itemClickListener) {
         mInflater = LayoutInflater.from(context);
-        mCurrentPage = 0;
         mResponseModel = null;
         mOnItemClickListener = itemClickListener;
     }
 
-    public void queryPosterHashes(final @TheMovieDBAPI.SortByDef String sortBy, final Handler query_handler) {
-        if (mResponseModel == null || mCurrentPage <= mResponseModel.getTotalPages()) {
+    public void queryPosterHashes(final int page, final @TheMovieDBAPI.SortByDef String sortBy, final Handler query_handler) {
+        if (mResponseModel == null || page <= mResponseModel.getTotalPages()) {
             Log.i(TAG, "Querying for Poster Hashes");
             query_handler.sendEmptyMessage(QUERY_MESSAGE_STARTED);
-            TheMovieDBAPI.discover(mCurrentPage + 1, sortBy, new JsonHttpResponseHandler() {
+            TheMovieDBAPI.discover(page, sortBy, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     Log.i(TAG, "Finished querying for poster hashes with success!");
-                    mCurrentPage += 1;
                     Gson gson = new Gson();
                     TheMovieDBResponseModel model = gson.fromJson(response.toString(), TheMovieDBResponseModel.class);
                     if (mResponseModel == null) {
@@ -64,7 +61,11 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
                     } else {
                         mResponseModel.addAll(model.getResults());
                     }
-                    query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_SUCCESS);
+                    Message msg = query_handler.obtainMessage();
+                    msg.what = QUERY_MESSAGE_FINISHED_WITH_SUCCESS;
+                    msg.arg1 = page;
+                    msg.arg2 = model.getResults().size();
+                    query_handler.sendMessage(msg);
                 }
 
                 @Override
@@ -77,10 +78,10 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     }
 
     public void reset() {
-        mCurrentPage = 0;
         mResponseModel = null;
         notifyDataSetChanged();
     }
+
     public TheMovieDBResponseModel getResponseModel() {
         return mResponseModel;
     }
