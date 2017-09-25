@@ -33,7 +33,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
-    
+
     private static final int COLUMNS_LANDSCAPE = 4;
     private static final int COLUMNS_PORTRAIT = 2;
 

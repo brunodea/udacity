@@ -1,6 +1,7 @@
 package brunodea.udacity.com.popmovies.moviedb;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.StringDef;
 import android.widget.ImageView;
 
@@ -58,6 +59,7 @@ public class TheMovieDBAPI {
     public static void downloadImageToView(Context context, ImageView imageView, @ImageW String imageW, String imagePath) {
         Picasso.with(context)
                 .load("http://image.tmdb.org/t/p/"+imageW+"/"+imagePath)
+                .placeholder(new ColorDrawable(android.R.color.white))
                 .error(R.mipmap.broken_image)
                 .into(imageView);
     }
