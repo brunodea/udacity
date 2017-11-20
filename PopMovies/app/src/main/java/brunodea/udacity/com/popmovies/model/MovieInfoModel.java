@@ -20,7 +20,9 @@ public class MovieInfoModel implements Parcelable {
         backdropPath = in.readString();
         releaseDate = in.readString();
 		title = in.readString();
+		id = in.readInt();
     }
+
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeString(overview);
@@ -31,7 +33,9 @@ public class MovieInfoModel implements Parcelable {
         parcel.writeString(backdropPath);
         parcel.writeString(releaseDate);
 		parcel.writeString(title);
+		parcel.writeInt(id);
     }
+
     @Override
     public int describeContents() {
         return 0;
