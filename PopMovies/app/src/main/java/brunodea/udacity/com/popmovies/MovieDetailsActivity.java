@@ -81,9 +81,9 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(MovieVideoModel model) {
                         // from https://stackoverflow.com/a/12439378
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + model.getId()));
+                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + model.getKey()));
                         Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" + model.getId()));
+                                Uri.parse("http://www.youtube.com/watch?v=" + model.getKey()));
                         try {
                             MovieDetailsActivity.this.startActivity(appIntent);
                         } catch (ActivityNotFoundException ex) {

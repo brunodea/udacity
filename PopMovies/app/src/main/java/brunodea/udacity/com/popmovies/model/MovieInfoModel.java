@@ -11,7 +11,6 @@ import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
 public class MovieInfoModel implements Parcelable {
-
 	public MovieInfoModel(Parcel in) {
         overview = in.readString();
         originalTitle = in.readString();
