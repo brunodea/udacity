@@ -12,4 +12,5 @@
     <string name="rating">Rating</string>
     <string name="loading_videos">Loading video list...</string>
     <string name="error_loading_videos">Error loading video list.</string>
+    <string name="reviews_activity_label">Movie Reviews</string>
 </resources>

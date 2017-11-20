@@ -1,6 +1,7 @@
 package brunodea.udacity.com.popmovies.moviedb;
 
 import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
+import brunodea.udacity.com.popmovies.model.MovieReviewResponseModel;
 import brunodea.udacity.com.popmovies.model.MovieVideoResponseModel;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -15,4 +16,7 @@ public interface TheMovieDBAPIInterface {
     @GET("movie/{id}/videos")
     Call<MovieVideoResponseModel> getMovieVideos(@Path("id") String movie_id,
                                                  @Query("api_key") String api_key);
+    @GET("movie/{id}/reviews")
+    Call<MovieReviewResponseModel> getMovieReviews(@Path("id") String movie_id,
+                                                   @Query("api_key") String api_key);
 }
