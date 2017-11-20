@@ -1,10 +1,7 @@
 package brunodea.udacity.com.popmovies;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,15 +20,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
-import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
-import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
+import brunodea.udacity.com.popmovies.adapter.MovieInfoAdapter;
 import brunodea.udacity.com.popmovies.model.MovieInfoModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
 import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivityLOG";
     private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
 
     private static final int COLUMNS_LANDSCAPE = 4;
@@ -42,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.rv_pop_movies) RecyclerView mRVPopMovies;
     @BindView(R.id.swiperefresh) SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private TheMovieDBAdapter mTheMovieDBAdapter;
+    private MovieInfoAdapter mMovieInfoAdapter;
     private Handler mQueryPosterHandler;
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
 
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
-        mTheMovieDBAdapter = new TheMovieDBAdapter(this, new TheMovieDBAdapter.OnItemClickListener() {
+        mMovieInfoAdapter = new MovieInfoAdapter(this, new MovieInfoAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(MovieInfoModel model) {
                 Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
@@ -73,24 +70,26 @@ public class MainActivity extends AppCompatActivity {
             public void handleMessage(Message inputMessage) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 switch (inputMessage.what) {
-                    case TheMovieDBAdapter.QUERY_MESSAGE_STARTED:
+                    case MovieInfoAdapter.QUERY_MESSAGE_STARTED:
                         mPBLoadingMovies.setVisibility(View.VISIBLE);
                         break;
-                    case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
+                    case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
                         // msg.arg1 = page, msg.arg2 = item_count
                         mPBLoadingMovies.setVisibility(View.GONE);
                         if (inputMessage.arg1 == 1 && inputMessage.arg2 > 0) {
-                            mTheMovieDBAdapter.reset();
+                            mMovieInfoAdapter.reset();
                             mEndlessScrollListener.resetState();
                         }
-                        mTheMovieDBAdapter.notifyItemRangeChanged(
+                        mMovieInfoAdapter.notifyItemRangeChanged(
                                 (inputMessage.arg1-1)*inputMessage.arg2,
                                 inputMessage.arg2
                         );
-                        mTheMovieDBAdapter.notifyDataSetChanged();
+                        mRVPopMovies.setVisibility(View.VISIBLE);
+                        mMovieInfoAdapter.notifyDataSetChanged();
                         mTVError.setVisibility(View.GONE);
+                        Log.e(TAG, "Query FINISH:");
                         break;
-                    case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_ERROR:
+                    case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_ERROR:
                         mTVError.setText(getResources().getText(R.string.error_downloading_info));
                         mTVError.setVisibility(View.VISIBLE);
                         mPBLoadingMovies.setVisibility(View.GONE);
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
-            mTheMovieDBAdapter.setResponseModel(
+            mMovieInfoAdapter.setResponseModel(
                     (MovieInfoResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
             );
         } else {
@@ -122,24 +121,18 @@ public class MainActivity extends AppCompatActivity {
         mRVPopMovies.addOnScrollListener(mEndlessScrollListener);
         mRVPopMovies.setLayoutManager(grid);
         mRVPopMovies.setHasFixedSize(true);
-        mRVPopMovies.setAdapter(mTheMovieDBAdapter);
+        mRVPopMovies.setAdapter(mMovieInfoAdapter);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY, mTheMovieDBAdapter.getResponseModel());
+        outState.putParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY, mMovieInfoAdapter.getResponseModel());
         super.onSaveInstanceState(outState);
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnected();
-    }
-
     private void load_more_movies(int page) {
-        if (isOnline()) {
-            mTheMovieDBAdapter.queryPosterHashes(page, mCurrSortBy, mQueryPosterHandler);
+        if (Util.isOnline(this)) {
+            mMovieInfoAdapter.queryPosterHashes(page, mCurrSortBy, mQueryPosterHandler);
             mTVError.setVisibility(View.GONE);
         } else {
             mTVError.setText(R.string.error_no_internet);
@@ -147,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void reset_movie_list() {
-        mTheMovieDBAdapter.reset();
+        mMovieInfoAdapter.reset();
         mEndlessScrollListener.resetState();
         load_more_movies(1);
     }

@@ -10,4 +10,6 @@
     <string name="original_title"><![CDATA[<b>Original Title:</b> %s]]></string>
     <string name="popularity">Popularity</string>
     <string name="rating">Rating</string>
+    <string name="loading_videos">Loading video list...</string>
+    <string name="error_loading_videos">Error loading video list.</string>
 </resources>

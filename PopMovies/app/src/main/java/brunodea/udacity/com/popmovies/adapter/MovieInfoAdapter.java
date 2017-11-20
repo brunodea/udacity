@@ -25,19 +25,19 @@ import retrofit2.Response;
  * Adapter class to be used by some RecyclerView.
  * It takes data from TheMovieDB and populate a ViewHolder with the gathered information.
  */
-public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.ViewHolder> {
+public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.ViewHolder> {
     public static final int QUERY_MESSAGE_STARTED = 1;
     public static final int QUERY_MESSAGE_FINISHED_WITH_SUCCESS = 2;
     public static final int QUERY_MESSAGE_FINISHED_WITH_ERROR = 3;
 
-    private static final String TAG = "TheMovieDBAdapter";
+    private static final String TAG = "MovieInfoAdapter";
 
     private LayoutInflater mInflater;
 
     private MovieInfoResponseModel mResponseModel;
     private OnItemClickListener mOnItemClickListener;
 
-    public TheMovieDBAdapter(Context context, OnItemClickListener itemClickListener) {
+    public MovieInfoAdapter(Context context, OnItemClickListener itemClickListener) {
         mInflater = LayoutInflater.from(context);
         mResponseModel = null;
         mOnItemClickListener = itemClickListener;
@@ -62,8 +62,10 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
                         msg.what = QUERY_MESSAGE_FINISHED_WITH_SUCCESS;
                         msg.arg1 = page;
                         msg.arg2 = model.getResults().size();
+                        Log.i(TAG, "QUERY result length: " + msg.arg2);
                         query_handler.sendMessage(msg);
                     } else {
+                        Log.i(TAG, "QUERY failed 1");
                         query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                     }
                 }
@@ -71,6 +73,7 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
                 @Override
                 public void onFailure(Call<MovieInfoResponseModel> call, Throwable t) {
                     Log.e(TAG, t.toString());
+                    Log.i(TAG, "QUERY failed 2");
                     query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                 }
             });
@@ -90,12 +93,14 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     }
 
     @Override
-    public TheMovieDBAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MovieInfoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.main_grid_item, parent, false);
+        Log.i(TAG, "Create ViewHolder ModelInfo");
         return new ViewHolder(view);
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Log.i(TAG, "BindViewHolder");
         if (mResponseModel != null) {
             final MovieInfoModel rm = mResponseModel.getResults().get(position);
             TheMovieDBAPI.downloadImageToView(

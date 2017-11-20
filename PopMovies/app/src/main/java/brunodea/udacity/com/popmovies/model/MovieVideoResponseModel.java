@@ -37,7 +37,6 @@ public class MovieVideoResponseModel implements Parcelable {
 		}
 	};
 
-
 	@SerializedName("id")
 	private int id;
 
