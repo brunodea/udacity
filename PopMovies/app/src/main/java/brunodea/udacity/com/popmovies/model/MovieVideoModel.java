@@ -1,11 +1,39 @@
 package brunodea.udacity.com.popmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class MovieVideoModel {
+public class MovieVideoModel implements Parcelable {
+
+	MovieVideoModel(Parcel in) {
+		site = in.readString();
+		key = in.readString();
+		type = in.readString();
+		name = in.readString();
+	}
+
+	@Override
+	public void writeToParcel(Parcel parcel, int flags) {
+	    parcel.writeString(site);
+		parcel.writeString(key);
+		parcel.writeString(type);
+		parcel.writeString(name);
+	}
+
+	static final Parcelable.Creator<MovieVideoModel> CREATOR
+			= new Parcelable.Creator<MovieVideoModel>() {
+		public MovieVideoModel createFromParcel(Parcel in) {
+			return new MovieVideoModel(in);
+		}
+		public MovieVideoModel[] newArray(int size) {
+			return new MovieVideoModel[size];
+		}
+	};
 
 	@SerializedName("site")
 	private String site;
@@ -108,5 +136,11 @@ public class MovieVideoModel {
 			",iso_639_1 = '" + iso6391 + '\'' + 
 			",key = '" + key + '\'' + 
 			"}";
-		}
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
 }

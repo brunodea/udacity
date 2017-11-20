@@ -16,6 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import brunodea.udacity.com.popmovies.BuildConfig;
 import brunodea.udacity.com.popmovies.R;
 import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
+import brunodea.udacity.com.popmovies.model.MovieVideoResponseModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -56,10 +57,24 @@ public class TheMovieDBAPI {
         call.enqueue(callback);
     }
 
+    public static void getMovieVideos(final String movie_id, final Callback<MovieVideoResponseModel> callback) {
+        Gson gson = new GsonBuilder()
+                .setLenient()
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        TheMovieDBAPIInterface movie_db = retrofit.create(TheMovieDBAPIInterface.class);
+        Call<MovieVideoResponseModel> call = movie_db.getMovieVideos(movie_id, BuildConfig.API_KEY);
+        call.enqueue(callback);
+    }
+
     public static void downloadImageToView(Context context, ImageView imageView, @ImageW String imageW, String imagePath) {
         Picasso.with(context)
                 .load("http://image.tmdb.org/t/p/"+imageW+"/"+imagePath)
-                .placeholder(new ColorDrawable(android.R.color.white))
+                .placeholder(new ColorDrawable(context.getResources().getColor(android.R.color.white)))
                 .error(R.mipmap.broken_image)
                 .into(imageView);
     }
