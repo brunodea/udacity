@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoModel;
 import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,7 +42,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(RESULT_MODEL_EXTRA)) {
-                TheMovieDBResultModel model = intent.getParcelableExtra(RESULT_MODEL_EXTRA);
+                MovieInfoModel model = intent.getParcelableExtra(RESULT_MODEL_EXTRA);
                 TheMovieDBAPI.downloadImageToView(this,
                     mIVPoster,
                     TheMovieDBAPI.IMAGE_W780,

@@ -24,8 +24,8 @@ import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
 import brunodea.udacity.com.popmovies.adapter.TheMovieDBAdapter;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoModel;
 import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
         mTheMovieDBAdapter = new TheMovieDBAdapter(this, new TheMovieDBAdapter.OnItemClickListener() {
             @Override
-            public void OnItemClick(TheMovieDBResultModel model) {
+            public void OnItemClick(MovieInfoModel model) {
                 Intent intent = new Intent(MainActivity.this, MovieDetailsActivity.class);
                 intent.putExtra(MovieDetailsActivity.RESULT_MODEL_EXTRA, model);
                 startActivity(intent);
@@ -79,6 +79,10 @@ public class MainActivity extends AppCompatActivity {
                     case TheMovieDBAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
                         // msg.arg1 = page, msg.arg2 = item_count
                         mPBLoadingMovies.setVisibility(View.GONE);
+                        if (inputMessage.arg1 == 1 && inputMessage.arg2 > 0) {
+                            mTheMovieDBAdapter.reset();
+                            mEndlessScrollListener.resetState();
+                        }
                         mTheMovieDBAdapter.notifyItemRangeChanged(
                                 (inputMessage.arg1-1)*inputMessage.arg2,
                                 inputMessage.arg2
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         };
         if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
             mTheMovieDBAdapter.setResponseModel(
-                    (TheMovieDBResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
+                    (MovieInfoResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
             );
         } else {
             load_more_movies(1);
@@ -190,7 +194,9 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.action_refresh: {
                 //mSwipeRefreshLayout.setRefreshing(true);
-                reset_movie_list();
+                mRVPopMovies.smoothScrollToPosition(0);
+                load_more_movies(1);
+                //reset_movie_list();
                 return true;
             }
             default: {

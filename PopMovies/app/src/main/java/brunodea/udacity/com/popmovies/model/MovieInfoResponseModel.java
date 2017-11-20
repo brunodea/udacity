@@ -11,13 +11,13 @@ import java.util.List;
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class TheMovieDBResponseModel implements Parcelable {
+public class MovieInfoResponseModel implements Parcelable {
 
-	TheMovieDBResponseModel(Parcel in) {
+	MovieInfoResponseModel(Parcel in) {
 		page = in.readInt();
 		totalPages = in.readInt();
 		results = new ArrayList<>();
-		in.readTypedList(results, TheMovieDBResultModel.CREATOR);
+		in.readTypedList(results, MovieInfoModel.CREATOR);
         totalResults = in.readInt();
 	}
 
@@ -34,15 +34,15 @@ public class TheMovieDBResponseModel implements Parcelable {
         return 0;
     }
 
-    static final Parcelable.Creator<TheMovieDBResponseModel> CREATOR
-            = new Parcelable.Creator<TheMovieDBResponseModel>() {
+    static final Parcelable.Creator<MovieInfoResponseModel> CREATOR
+            = new Parcelable.Creator<MovieInfoResponseModel>() {
         @Override
-        public TheMovieDBResponseModel createFromParcel(Parcel in) {
-            return new TheMovieDBResponseModel(in);
+        public MovieInfoResponseModel createFromParcel(Parcel in) {
+            return new MovieInfoResponseModel(in);
         }
         @Override
-        public TheMovieDBResponseModel[] newArray(int size) {
-            return new TheMovieDBResponseModel[size];
+        public MovieInfoResponseModel[] newArray(int size) {
+            return new MovieInfoResponseModel[size];
         }
     };
 
@@ -53,7 +53,7 @@ public class TheMovieDBResponseModel implements Parcelable {
 	private int totalPages;
 
 	@SerializedName("results")
-	private List<TheMovieDBResultModel> results;
+	private List<MovieInfoModel> results;
 
 	@SerializedName("total_results")
 	private int totalResults;
@@ -74,15 +74,15 @@ public class TheMovieDBResponseModel implements Parcelable {
 		return totalPages;
 	}
 
-	public void setResults(List<TheMovieDBResultModel> results){
+	public void setResults(List<MovieInfoModel> results){
 		this.results = results;
 	}
 
-	public List<TheMovieDBResultModel> getResults(){
+	public List<MovieInfoModel> getResults(){
 		return results;
 	}
 
-	public void addAll(List<TheMovieDBResultModel> newResults) {
+	public void addAll(List<MovieInfoModel> newResults) {
         this.results.addAll(newResults);
     }
 

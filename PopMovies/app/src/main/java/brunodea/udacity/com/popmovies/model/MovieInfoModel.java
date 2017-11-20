@@ -10,9 +10,9 @@ import java.util.List;
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class TheMovieDBResultModel implements Parcelable {
+public class MovieInfoModel implements Parcelable {
 
-	public TheMovieDBResultModel(Parcel in) {
+	public MovieInfoModel(Parcel in) {
         overview = in.readString();
         originalTitle = in.readString();
         popularity = in.readDouble();
@@ -38,13 +38,13 @@ public class TheMovieDBResultModel implements Parcelable {
         return 0;
     }
 
-    static final Parcelable.Creator<TheMovieDBResultModel> CREATOR
-            = new Parcelable.Creator<TheMovieDBResultModel>() {
-        public TheMovieDBResultModel createFromParcel(Parcel in) {
-            return new TheMovieDBResultModel(in);
+    static final Parcelable.Creator<MovieInfoModel> CREATOR
+            = new Parcelable.Creator<MovieInfoModel>() {
+        public MovieInfoModel createFromParcel(Parcel in) {
+            return new MovieInfoModel(in);
         }
-        public TheMovieDBResultModel[] newArray(int size) {
-            return new TheMovieDBResultModel[size];
+        public MovieInfoModel[] newArray(int size) {
+            return new MovieInfoModel[size];
         }
     };
 

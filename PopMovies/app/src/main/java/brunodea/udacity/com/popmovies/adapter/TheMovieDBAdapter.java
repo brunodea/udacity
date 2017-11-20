@@ -12,8 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.R;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResultModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoModel;
 import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +34,7 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
 
     private LayoutInflater mInflater;
 
-    private TheMovieDBResponseModel mResponseModel;
+    private MovieInfoResponseModel mResponseModel;
     private OnItemClickListener mOnItemClickListener;
 
     public TheMovieDBAdapter(Context context, OnItemClickListener itemClickListener) {
@@ -48,11 +48,11 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
             Log.i(TAG, "Querying for Poster Hashes");
             query_handler.sendEmptyMessage(QUERY_MESSAGE_STARTED);
 
-            TheMovieDBAPI.getMovies(page, sortBy, new Callback<TheMovieDBResponseModel>() {
+            TheMovieDBAPI.getMovies(page, sortBy, new Callback<MovieInfoResponseModel>() {
                 @Override
-                public void onResponse(Call<TheMovieDBResponseModel> call, Response<TheMovieDBResponseModel> response) {
+                public void onResponse(Call<MovieInfoResponseModel> call, Response<MovieInfoResponseModel> response) {
                     if (response.isSuccessful()) {
-                        TheMovieDBResponseModel model = response.body();
+                        MovieInfoResponseModel model = response.body();
                         if (mResponseModel == null) {
                             mResponseModel = model;
                         } else {
@@ -69,7 +69,7 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
                 }
 
                 @Override
-                public void onFailure(Call<TheMovieDBResponseModel> call, Throwable t) {
+                public void onFailure(Call<MovieInfoResponseModel> call, Throwable t) {
                     Log.e(TAG, t.toString());
                     query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                 }
@@ -82,10 +82,10 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
         notifyDataSetChanged();
     }
 
-    public TheMovieDBResponseModel getResponseModel() {
+    public MovieInfoResponseModel getResponseModel() {
         return mResponseModel;
     }
-    public void setResponseModel(TheMovieDBResponseModel model) {
+    public void setResponseModel(MovieInfoResponseModel model) {
         mResponseModel = model;
     }
 
@@ -97,7 +97,7 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if (mResponseModel != null) {
-            final TheMovieDBResultModel rm = mResponseModel.getResults().get(position);
+            final MovieInfoModel rm = mResponseModel.getResults().get(position);
             TheMovieDBAPI.downloadImageToView(
                 mInflater.getContext(),
                 holder.mIVMoviePoster,
@@ -134,6 +134,6 @@ public class TheMovieDBAdapter extends RecyclerView.Adapter<TheMovieDBAdapter.Vi
     }
 
     public interface OnItemClickListener {
-        void OnItemClick(final TheMovieDBResultModel model);
+        void OnItemClick(final MovieInfoModel model);
     }
 }

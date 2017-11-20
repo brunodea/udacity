@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 
 import brunodea.udacity.com.popmovies.BuildConfig;
 import brunodea.udacity.com.popmovies.R;
-import brunodea.udacity.com.popmovies.model.TheMovieDBResponseModel;
+import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -42,7 +42,7 @@ public class TheMovieDBAPI {
 
     private static AsyncHttpClient sClient = new AsyncHttpClient();
 
-    public static void getMovies(final int page, @SortByDef String sortBy, final Callback<TheMovieDBResponseModel> callback) {
+    public static void getMovies(final int page, @SortByDef String sortBy, final Callback<MovieInfoResponseModel> callback) {
         Gson gson = new GsonBuilder()
                 .setLenient()
                 .create();
@@ -52,7 +52,7 @@ public class TheMovieDBAPI {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         TheMovieDBAPIInterface movie_db = retrofit.create(TheMovieDBAPIInterface.class);
-        Call<TheMovieDBResponseModel> call = movie_db.getSortedMovies(sortBy, page, BuildConfig.API_KEY);
+        Call<MovieInfoResponseModel> call = movie_db.getSortedMovies(sortBy, page, BuildConfig.API_KEY);
         call.enqueue(callback);
     }
 
