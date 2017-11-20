@@ -133,7 +133,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 }
 
                 LinearLayoutManager layoutManager = new LinearLayoutManager(this,
-                        LinearLayoutManager.HORIZONTAL, false);
+                        LinearLayoutManager.VERTICAL, false);
                 mRVMovieVideos.setLayoutManager(layoutManager);
                 mRVMovieVideos.setHasFixedSize(true);
                 mRVMovieVideos.setAdapter(mMovieVideoAdapter);
