@@ -76,10 +76,6 @@ public class MainActivity extends AppCompatActivity {
                     case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
                         // msg.arg1 = page, msg.arg2 = item_count
                         mPBLoadingMovies.setVisibility(View.GONE);
-                        if (inputMessage.arg1 == 1 && inputMessage.arg2 > 0) {
-                            mMovieInfoAdapter.reset();
-                            mEndlessScrollListener.resetState();
-                        }
                         mMovieInfoAdapter.notifyItemRangeChanged(
                                 (inputMessage.arg1-1)*inputMessage.arg2,
                                 inputMessage.arg2
@@ -87,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
                         mRVPopMovies.setVisibility(View.VISIBLE);
                         mMovieInfoAdapter.notifyDataSetChanged();
                         mTVError.setVisibility(View.GONE);
-                        Log.e(TAG, "Query FINISH:");
                         break;
                     case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_ERROR:
                         mTVError.setText(getResources().getText(R.string.error_downloading_info));

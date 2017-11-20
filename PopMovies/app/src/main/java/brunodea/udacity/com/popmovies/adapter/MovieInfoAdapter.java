@@ -62,10 +62,8 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
                         msg.what = QUERY_MESSAGE_FINISHED_WITH_SUCCESS;
                         msg.arg1 = page;
                         msg.arg2 = model.getResults().size();
-                        Log.i(TAG, "QUERY result length: " + msg.arg2);
                         query_handler.sendMessage(msg);
                     } else {
-                        Log.i(TAG, "QUERY failed 1");
                         query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                     }
                 }
@@ -73,7 +71,6 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
                 @Override
                 public void onFailure(Call<MovieInfoResponseModel> call, Throwable t) {
                     Log.e(TAG, t.toString());
-                    Log.i(TAG, "QUERY failed 2");
                     query_handler.sendEmptyMessage(QUERY_MESSAGE_FINISHED_WITH_ERROR);
                 }
             });
@@ -95,12 +92,10 @@ public class MovieInfoAdapter extends RecyclerView.Adapter<MovieInfoAdapter.View
     @Override
     public MovieInfoAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.main_grid_item, parent, false);
-        Log.i(TAG, "Create ViewHolder ModelInfo");
         return new ViewHolder(view);
     }
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.i(TAG, "BindViewHolder");
         if (mResponseModel != null) {
             final MovieInfoModel rm = mResponseModel.getResults().get(position);
             TheMovieDBAPI.downloadImageToView(
