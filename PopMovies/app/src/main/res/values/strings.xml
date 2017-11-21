@@ -22,4 +22,5 @@
     <string name="sort_by_favorites">Favorites</string>
     <string name="sort_by_popular">Most Popular</string>
     <string name="sort_by_rating">Best Ratings</string>
+    <string name="no_favorites">You have no favorite movies!</string>
 </resources>

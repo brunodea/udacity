@@ -160,6 +160,14 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
+            reset_movie_list();
+        }
+    }
+
     private void load_more_movies(int page) {
         if (Util.isOnline(this)) {
             mMovieInfoAdapter.queryPosterHashes(page, mCurrSortBy, mQueryPosterHandler);
@@ -184,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
         MovieInfoResponseModel responseModel = new MovieInfoResponseModel(mFavoriteDB.getAllFavorites());
         mMovieInfoAdapter.setResponseModel(responseModel);
         mMovieInfoAdapter.notifyDataSetChanged();
+        if (responseModel.getResults().isEmpty()) {
+            mTVError.setText(R.string.no_favorites);
+        }
     }
 
     @Override
