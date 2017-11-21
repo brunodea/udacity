@@ -25,6 +25,7 @@
             android:name=".MovieDetailsActivity"
             android:label="@string/details_activity_label"
             android:parentActivityName=".MainActivity"
+            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -33,7 +34,7 @@
         <activity android:name=".MovieReviewsActivity"
             android:label="@string/reviews_activity_label"
             android:parentActivityName=".MovieDetailsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MovieDetailsActivity" />

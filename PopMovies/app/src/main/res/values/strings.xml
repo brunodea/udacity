@@ -13,4 +13,9 @@
     <string name="loading_videos">Loading video list...</string>
     <string name="error_loading_videos">Error loading video list.</string>
     <string name="reviews_activity_label">Movie Reviews</string>
+    <string name="activity_reviews_title">Reviews</string>
+    <string name="goto_reviews">View reviews</string>
+    <string name="error_loading_reviews">Error loading reviews.</string>
+    <string name="no_reviews">No reviews were found.</string>
+    <string name="activity_error">Error loading activity. This should never happen!</string>
 </resources>

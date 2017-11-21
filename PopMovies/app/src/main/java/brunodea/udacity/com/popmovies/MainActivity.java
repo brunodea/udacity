@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
 import brunodea.udacity.com.popmovies.adapter.MovieInfoAdapter;
@@ -71,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
                 mSwipeRefreshLayout.setRefreshing(false);
                 switch (inputMessage.what) {
                     case MovieInfoAdapter.QUERY_MESSAGE_STARTED:
-                        mPBLoadingMovies.setVisibility(View.VISIBLE);
+                        if (mMovieInfoAdapter.getItemCount() == 0) {
+                            mPBLoadingMovies.setVisibility(View.VISIBLE);
+                        }
                         break;
                     case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_SUCCESS:
                         // msg.arg1 = page, msg.arg2 = item_count
@@ -85,9 +88,14 @@ public class MainActivity extends AppCompatActivity {
                         mTVError.setVisibility(View.GONE);
                         break;
                     case MovieInfoAdapter.QUERY_MESSAGE_FINISHED_WITH_ERROR:
-                        mTVError.setText(getResources().getText(R.string.error_downloading_info));
-                        mTVError.setVisibility(View.VISIBLE);
-                        mPBLoadingMovies.setVisibility(View.GONE);
+                        if (mMovieInfoAdapter.getItemCount() == 0) {
+                            mTVError.setText(getResources().getText(R.string.error_downloading_info));
+                            mTVError.setVisibility(View.VISIBLE);
+                            mPBLoadingMovies.setVisibility(View.GONE);
+                        } else {
+                            Toast.makeText(MainActivity.this, R.string.error_downloading_info, Toast.LENGTH_LONG)
+                                    .show();
+                        }
                         break;
                     default:
                         //unreachable!

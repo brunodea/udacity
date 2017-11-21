@@ -23,7 +23,6 @@
             android:isIndicator="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
         <TextView
             android:id="@+id/tv_original_title"
             android:textSize="@dimen/normalTextSize"
@@ -34,6 +33,15 @@
             android:textSize="@dimen/normalTextSize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/tv_goto_reviews"
+            android:textSize="@dimen/normalTextSize"
+            android:textStyle="bold"
+            android:text="@string/goto_reviews"
+            android:textColor="@android:color/holo_blue_dark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <TextView
             android:id="@+id/tv_movie_overview"
             android:textSize="@dimen/bigTextSize"

@@ -29,6 +29,7 @@ import butterknife.ButterKnife;
 
 public class MovieDetailsActivity extends AppCompatActivity {
     public static final String RESULT_MODEL_EXTRA = "result_model";
+    private static final String MOVIE_INFO_PARCELABLE_STATE_KEY = "movie_info";
     private static final String MOVIE_VIDEO_PARCELABLE_STATE_KEY = "movie_videos";
 
     @BindView(R.id.iv_movie_poster_details) ImageView mIVPoster;
@@ -38,14 +39,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @BindView(R.id.tv_release_date) TextView mTVReleaseDate;
     @BindView(R.id.details_toolbar) Toolbar mToolbar;
     @BindView(R.id.toolbar_layout) CollapsingToolbarLayout mToolbarLayout;
+    @BindView(R.id.tv_goto_reviews) TextView mTVGotoReviews;
 
     @BindView(R.id.tv_movie_videos_global) TextView mTVVideoGlobal;
     @BindView(R.id.pb_loading_movie_videos) ProgressBar mPBLoadingVideos;
     @BindView(R.id.rv_movie_videos) RecyclerView mRVMovieVideos;
 
     private MovieInfoModel mMovieInfoModel;
-    private MovieVideoModel mMovieVideoModel;
-
     private MovieVideoAdapter mMovieVideoAdapter;
 
     @Override
@@ -58,92 +58,121 @@ public class MovieDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mMovieVideoAdapter = new MovieVideoAdapter(this, new MovieVideoAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(MovieVideoModel model) {
+                // from https://stackoverflow.com/a/12439378
+                Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + model.getKey()));
+                Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("http://www.youtube.com/watch?v=" + model.getKey()));
+                try {
+                    MovieDetailsActivity.this.startActivity(appIntent);
+                } catch (ActivityNotFoundException ex) {
+                    MovieDetailsActivity.this.startActivity(webIntent);
+                }
+            }
+        });
+
+        reloadFromBundle(savedInstanceState);
+
+        // if it wasn't reloaded from the bundle, it should come from an intent.
         Intent intent = getIntent();
-        if (intent != null) {
-            if (intent.hasExtra(RESULT_MODEL_EXTRA)) {
-                mMovieInfoModel = intent.getParcelableExtra(RESULT_MODEL_EXTRA);
-                TheMovieDBAPI.downloadImageToView(this,
-                    mIVPoster,
-                    TheMovieDBAPI.IMAGE_W780,
-                    mMovieInfoModel.getBackdropPath()
-                );
-                mToolbarLayout.setTitle(mMovieInfoModel.getTitle());
-                mRBRating.setRating((float) mMovieInfoModel.getVoteAverage()/2.f);
-                mTVOverview.setText(mMovieInfoModel.getOverview());
-                mTVOriginalTitle.setText(
-                    fromHtml(getString(R.string.original_title, mMovieInfoModel.getOriginalTitle()))
-                );
-                mTVReleaseDate.setText(
-                    fromHtml(getString(R.string.release_date, mMovieInfoModel.getReleaseDate()))
-                );
+        if (mMovieInfoModel == null && intent != null && intent.hasExtra(RESULT_MODEL_EXTRA)) {
+            mMovieInfoModel = intent.getParcelableExtra(RESULT_MODEL_EXTRA);
+        }
 
-                mMovieVideoAdapter = new MovieVideoAdapter(this, new MovieVideoAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(MovieVideoModel model) {
-                        // from https://stackoverflow.com/a/12439378
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + model.getKey()));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("http://www.youtube.com/watch?v=" + model.getKey()));
-                        try {
-                            MovieDetailsActivity.this.startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            MovieDetailsActivity.this.startActivity(webIntent);
-                        }
-                    }
-                });
+        if (mMovieInfoModel != null) {
+            loadMovieInfo();
+        }
 
-                if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_VIDEO_PARCELABLE_STATE_KEY)) {
-                    mMovieVideoAdapter.setResponseModel(
-                            (MovieVideoResponseModel) savedInstanceState.getParcelable(MOVIE_VIDEO_PARCELABLE_STATE_KEY)
+        mTVGotoReviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MovieDetailsActivity.this, MovieReviewsActivity.class);
+                intent.putExtra(MovieReviewsActivity.MOVIE_INFO_EXTRA, mMovieInfoModel);
+                startActivity(intent);
+            }
+        });
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
+        mRVMovieVideos.setLayoutManager(layoutManager);
+        mRVMovieVideos.setHasFixedSize(true);
+        mRVMovieVideos.setAdapter(mMovieVideoAdapter);
+    }
+
+    public void reloadFromBundle(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(MOVIE_INFO_PARCELABLE_STATE_KEY)) {
+                mMovieInfoModel = savedInstanceState.getParcelable(MOVIE_INFO_PARCELABLE_STATE_KEY);
+            }
+            if (savedInstanceState.containsKey(MOVIE_VIDEO_PARCELABLE_STATE_KEY)) {
+                mMovieVideoAdapter.setResponseModel(
+                        (MovieVideoResponseModel) savedInstanceState.getParcelable(MOVIE_VIDEO_PARCELABLE_STATE_KEY)
+                );
+            } else {
+                if (Util.isOnline(this)) {
+                    mMovieVideoAdapter.queryVideos(String.valueOf(mMovieInfoModel.getId()),
+                            new MovieVideoAdapter.QueryCallback() {
+                                @Override
+                                public void onQueryStarted() {
+                                    mPBLoadingVideos.setVisibility(View.VISIBLE);
+                                    mTVVideoGlobal.setVisibility(View.VISIBLE);
+                                    mRVMovieVideos.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onQueryFailure() {
+                                    mPBLoadingVideos.setVisibility(View.GONE);
+                                    mTVVideoGlobal.setVisibility(View.VISIBLE);
+                                    mTVVideoGlobal.setText(R.string.error_loading_videos);
+                                    mRVMovieVideos.setVisibility(View.GONE);
+                                }
+
+                                @Override
+                                public void onQuerySuccess() {
+                                    mPBLoadingVideos.setVisibility(View.GONE);
+                                    mTVVideoGlobal.setVisibility(View.GONE);
+                                    mRVMovieVideos.setVisibility(View.VISIBLE);
+                                    mMovieVideoAdapter.notifyDataSetChanged();
+                                }
+                            }
                     );
                 } else {
-                    if (Util.isOnline(this)) {
-                        mMovieVideoAdapter.queryVideos(String.valueOf(mMovieInfoModel.getId()),
-                                new MovieVideoAdapter.QueryCallback() {
-                                    @Override
-                                    public void onQueryStarted() {
-                                        mPBLoadingVideos.setVisibility(View.VISIBLE);
-                                        mTVVideoGlobal.setVisibility(View.VISIBLE);
-                                        mRVMovieVideos.setVisibility(View.GONE);
-                                    }
-
-                                    @Override
-                                    public void onQueryFailure() {
-                                        mPBLoadingVideos.setVisibility(View.GONE);
-                                        mTVVideoGlobal.setVisibility(View.VISIBLE);
-                                        mTVVideoGlobal.setText(R.string.error_loading_videos);
-                                        mRVMovieVideos.setVisibility(View.GONE);
-                                    }
-
-                                    @Override
-                                    public void onQuerySuccess() {
-                                        mPBLoadingVideos.setVisibility(View.GONE);
-                                        mTVVideoGlobal.setVisibility(View.GONE);
-                                        mRVMovieVideos.setVisibility(View.VISIBLE);
-                                        mMovieVideoAdapter.notifyDataSetChanged();
-                                    }
-                                }
-                        );
-                    } else {
-                        mPBLoadingVideos.setVisibility(View.GONE);
-                        mTVVideoGlobal.setVisibility(View.VISIBLE);
-                        mTVVideoGlobal.setText(R.string.error_no_internet);
-                        mRVMovieVideos.setVisibility(View.GONE);
-                    }
+                    mPBLoadingVideos.setVisibility(View.GONE);
+                    mTVVideoGlobal.setVisibility(View.VISIBLE);
+                    mTVVideoGlobal.setText(R.string.error_no_internet);
+                    mRVMovieVideos.setVisibility(View.GONE);
                 }
-
-                LinearLayoutManager layoutManager = new LinearLayoutManager(this,
-                        LinearLayoutManager.VERTICAL, false);
-                mRVMovieVideos.setLayoutManager(layoutManager);
-                mRVMovieVideos.setHasFixedSize(true);
-                mRVMovieVideos.setAdapter(mMovieVideoAdapter);
             }
         }
+    }
+
+    private void loadMovieInfo() {
+        TheMovieDBAPI.downloadImageToView(this,
+                mIVPoster,
+                TheMovieDBAPI.IMAGE_W780,
+                mMovieInfoModel.getBackdropPath()
+        );
+
+        mToolbarLayout.setTitle(mMovieInfoModel.getTitle());
+        mRBRating.setRating((float) mMovieInfoModel.getVoteAverage()/2.f);
+        mTVOverview.setText(mMovieInfoModel.getOverview());
+        mTVOriginalTitle.setText(
+                fromHtml(getString(R.string.original_title, mMovieInfoModel.getOriginalTitle()))
+        );
+        mTVReleaseDate.setText(
+                fromHtml(getString(R.string.release_date, mMovieInfoModel.getReleaseDate()))
+        );
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(MOVIE_VIDEO_PARCELABLE_STATE_KEY, mMovieVideoAdapter.getResponseModel());
+        outState.putParcelable(MOVIE_INFO_PARCELABLE_STATE_KEY, mMovieInfoModel);
+
+        super.onSaveInstanceState(outState);
     }
 
     // from: https://stackoverflow.com/a/37905107
