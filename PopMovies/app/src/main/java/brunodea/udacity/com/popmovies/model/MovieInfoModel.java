@@ -207,20 +207,20 @@ public class MovieInfoModel implements Parcelable {
  	public String toString(){
 		return 
 			"{" +
-			"overview = '" + overview + '\'' + 
-			",original_language = '" + originalLanguage + '\'' + 
-			",original_title = '" + originalTitle + '\'' + 
-			",video = '" + video + '\'' + 
-			",title = '" + title + '\'' + 
-			//",genre_ids = '" + genreIds + '\'' +
-			",poster_path = '" + posterPath + '\'' + 
-			",backdrop_path = '" + backdropPath + '\'' + 
-			",release_date = '" + releaseDate + '\'' + 
-			",popularity = '" + popularity + '\'' + 
-			",vote_average = '" + voteAverage + '\'' + 
-			",id = '" + id + '\'' + 
-			",adult = '" + adult + '\'' + 
-			",vote_count = '" + voteCount + '\'' + 
+			"overview = \"" + overview + '\"' +
+			",original_language = \"" + originalLanguage + '\"' +
+			",original_title = \"" + originalTitle + '\"' +
+			",video = \"" + video + '\"' +
+			",title = \"" + title + '\"' +
+			//",genre_ids = '" + genreIds + '\"' +
+			",poster_path = \"" + posterPath + '\"' +
+			",backdrop_path = \"" + backdropPath + '\"' +
+			",release_date = \"" + releaseDate + '\"' +
+			",popularity = \"" + popularity + '\"' +
+			",vote_average = \"" + voteAverage + '\"' +
+			",id = \"" + id + '\"' +
+			",adult = \"" + adult + '\"' +
+			",vote_count = \"" + voteCount + '\"' +
 			"}";
 	}
 

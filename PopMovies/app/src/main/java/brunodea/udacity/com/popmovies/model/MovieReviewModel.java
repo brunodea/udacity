@@ -79,10 +79,10 @@ public class MovieReviewModel implements Parcelable {
  	public String toString(){
 		return 
 			"MovieReviewModel{" +
-			"author = '" + author + '\'' + 
-			",id = '" + id + '\'' + 
-			",content = '" + content + '\'' + 
-			",url = '" + url + '\'' + 
+			"author = \"" + author + '\"' +
+			",id = \"" + id + '\"' +
+			",content = \"" + content + '\"' +
+			",url = \"" + url + '\"' +
 			"}";
 		}
 

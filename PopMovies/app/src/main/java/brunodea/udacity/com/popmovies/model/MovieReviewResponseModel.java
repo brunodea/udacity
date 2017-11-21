@@ -102,11 +102,11 @@ public class MovieReviewResponseModel implements Parcelable {
  	public String toString(){
 		return 
 			"MovieReviewResponseModel{" + 
-			"id = '" + id + '\'' + 
-			",page = '" + page + '\'' + 
-			",total_pages = '" + totalPages + '\'' + 
-			",results = '" + results + '\'' + 
-			",total_results = '" + totalResults + '\'' + 
+			"id = \"" + id + '\"' +
+			",page = \"" + page + '\"' +
+			",total_pages = \"" + totalPages + '\"' +
+			",results = \"" + results + '\"' +
+			",total_results = \"" + totalResults + '\"' +
 			"}";
 		}
 

@@ -21,6 +21,13 @@ public class MovieInfoResponseModel implements Parcelable {
         totalResults = in.readInt();
 	}
 
+	public MovieInfoResponseModel(ArrayList<MovieInfoModel> movies) {
+	    results = movies;
+	    page = 1;
+	    totalPages = 1;
+	    totalResults = movies.size();
+	}
+
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         parcel.writeInt(page);
@@ -98,10 +105,10 @@ public class MovieInfoResponseModel implements Parcelable {
  	public String toString(){
 		return 
 			"{" +
-			"page = '" + page + '\'' + 
-			",total_pages = '" + totalPages + '\'' + 
-			",results = '" + results + '\'' + 
-			",total_results = '" + totalResults + '\'' + 
+			"page = \"" + page + '\"' +
+			",total_pages = \"" + totalPages + '\"' +
+			",results = \"" + results + '\"' +
+			",total_results = \"" + totalResults + '\"' +
 			"}";
 	}
 }

@@ -1,6 +1,8 @@
 package brunodea.udacity.com.popmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import brunodea.udacity.com.popmovies.adapter.EndlessRecyclerViewScrollListener;
 import brunodea.udacity.com.popmovies.adapter.MovieInfoAdapter;
+import brunodea.udacity.com.popmovies.db.FavoritesDB;
 import brunodea.udacity.com.popmovies.model.MovieInfoModel;
 import brunodea.udacity.com.popmovies.model.MovieInfoResponseModel;
 import brunodea.udacity.com.popmovies.moviedb.TheMovieDBAPI;
@@ -32,9 +35,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivityLOG";
     private static final String MOVIE_LIST_PARCELABLE_STATE_KEY = "movies_list";
 
+    private static final String CURR_SORT_PREF = "curr_sort_pref";
+
     private static final int COLUMNS_LANDSCAPE = 4;
     private static final int COLUMNS_PORTRAIT = 2;
 
+    @BindView(R.id.tv_sort_by_title) TextView mSortByTitle;
     @BindView(R.id.pb_loading_movies) ProgressBar mPBLoadingMovies;
     @BindView(R.id.tv_error) TextView mTVError;
     @BindView(R.id.rv_pop_movies) RecyclerView mRVPopMovies;
@@ -45,13 +51,20 @@ public class MainActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener mEndlessScrollListener;
 
     private @TheMovieDBAPI.SortByDef String mCurrSortBy;
+    private FavoritesDB mFavoriteDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
+
+        mFavoriteDB = new FavoritesDB(this);
+
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        mCurrSortBy = prefs.getString(CURR_SORT_PREF, TheMovieDBAPI.SORTBY_POPULARITY);
+        adjustSortByTitle();
+
         mMovieInfoAdapter = new MovieInfoAdapter(this, new MovieInfoAdapter.OnItemClickListener() {
             @Override
             public void OnItemClick(MovieInfoModel model) {
@@ -104,13 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
-        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
-            mMovieInfoAdapter.setResponseModel(
-                    (MovieInfoResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
-            );
-        } else {
-            load_more_movies(1);
-        }
 
         int num_cols = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ?
                 COLUMNS_LANDSCAPE : COLUMNS_PORTRAIT;
@@ -118,13 +124,34 @@ public class MainActivity extends AppCompatActivity {
         mEndlessScrollListener = new EndlessRecyclerViewScrollListener(grid) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                load_more_movies(page + 1);
+                if (!mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
+                    load_more_movies(page + 1);
+                }
             }
         };
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
+            mMovieInfoAdapter.setResponseModel(
+                    (MovieInfoResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
+            );
+        } else {
+            reset_movie_list();
+        }
+
         mRVPopMovies.addOnScrollListener(mEndlessScrollListener);
         mRVPopMovies.setLayoutManager(grid);
         mRVPopMovies.setHasFixedSize(true);
         mRVPopMovies.setAdapter(mMovieInfoAdapter);
+    }
+
+    private void adjustSortByTitle() {
+        if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
+            mSortByTitle.setText(R.string.sort_by_favorites);
+        } else if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_POPULARITY)) {
+            mSortByTitle.setText(R.string.sort_by_popular);
+        } else if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_RATING)) {
+            mSortByTitle.setText(R.string.sort_by_rating);
+        }
     }
 
     @Override
@@ -143,9 +170,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void reset_movie_list() {
+        if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
+            load_favorites();
+        } else {
+            mMovieInfoAdapter.reset();
+            mEndlessScrollListener.resetState();
+            load_more_movies(1);
+        }
+    }
+    private void load_favorites() {
         mMovieInfoAdapter.reset();
         mEndlessScrollListener.resetState();
-        load_more_movies(1);
+        MovieInfoResponseModel responseModel = new MovieInfoResponseModel(mFavoriteDB.getAllFavorites());
+        mMovieInfoAdapter.setResponseModel(responseModel);
+        mMovieInfoAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -167,18 +205,32 @@ public class MainActivity extends AppCompatActivity {
                         switch (item.getItemId()) {
                             case R.id.action_sortby_popularity: {
                                 mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
+                                mSwipeRefreshLayout.setEnabled(true);
                                 break;
                             }
                             case R.id.action_sortby_rating: {
                                 mCurrSortBy = TheMovieDBAPI.SORTBY_RATING;
+                                mSwipeRefreshLayout.setEnabled(true);
+                                break;
+                            }
+                            case R.id.action_sortby_favorites: {
+                                mCurrSortBy = TheMovieDBAPI.SORTBY_FAVORITES;
+                                mSwipeRefreshLayout.setEnabled(false);
                                 break;
                             }
                             default: {
                                 return false;
                             }
                         }
+
                         if (!mCurrSortBy.equals(last_sort_by)) {
+                            SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences.Editor prefs_editor = prefs.edit();
+                            prefs_editor.putString(CURR_SORT_PREF, mCurrSortBy);
+                            prefs_editor.apply();
+
                             reset_movie_list();
+                            adjustSortByTitle();
                         }
                         return true;
                     }
@@ -189,10 +241,12 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
             case R.id.action_refresh: {
-                //mSwipeRefreshLayout.setRefreshing(true);
-                mRVPopMovies.smoothScrollToPosition(0);
-                load_more_movies(1);
-                //reset_movie_list();
+                if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
+                    reset_movie_list();
+                } else {
+                    mRVPopMovies.smoothScrollToPosition(0);
+                    load_more_movies(1);
+                }
                 return true;
             }
             default: {

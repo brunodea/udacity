@@ -63,8 +63,8 @@ public class MovieVideoResponseModel implements Parcelable {
  	public String toString(){
 		return 
 			"MovieVideoResponseModel{" + 
-			"id = '" + id + '\'' + 
-			",results = '" + results + '\'' + 
+			"id = \"" + id + '\"' +
+			",results = \"" + results + '\"' +
 			"}";
 		}
 

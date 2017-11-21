@@ -19,4 +19,7 @@
     <string name="no_reviews">No reviews were found.</string>
     <string name="activity_error">Error loading activity. This should never happen!</string>
     <string name="favorite_content_description">Favorite movie.</string>
+    <string name="sort_by_favorites">Favorites</string>
+    <string name="sort_by_popular">Most Popular</string>
+    <string name="sort_by_rating">Best Ratings</string>
 </resources>

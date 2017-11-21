@@ -34,9 +34,10 @@ public class TheMovieDBAPI {
 
     public static final String SORTBY_POPULARITY = "popular";
     public static final String SORTBY_RATING = "top_rated";
+    public static final String SORTBY_FAVORITES = "favorites";
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({ SORTBY_POPULARITY, SORTBY_RATING })
+    @StringDef({ SORTBY_POPULARITY, SORTBY_RATING, SORTBY_FAVORITES })
     public @interface SortByDef {}
 
     public static final String IMAGE_W185 = "w185";

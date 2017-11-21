@@ -127,14 +127,14 @@ public class MovieVideoModel implements Parcelable {
  	public String toString(){
 		return 
 			"MovieVideoModel{" +
-			"site = '" + site + '\'' + 
-			",size = '" + size + '\'' + 
-			",iso_3166_1 = '" + iso31661 + '\'' + 
-			",name = '" + name + '\'' + 
-			",id = '" + id + '\'' + 
-			",type = '" + type + '\'' + 
-			",iso_639_1 = '" + iso6391 + '\'' + 
-			",key = '" + key + '\'' + 
+			"site = \"" + site + '\"' +
+			",size = \"" + size + '\"' +
+			",iso_3166_1 = \"" + iso31661 + '\"' +
+			",name = \"" + name + '\"' +
+			",id = \"" + id + '\"' +
+			",type = \"" + type + '\"' +
+			",iso_639_1 = \"" + iso6391 + '\"' +
+			",key = \"" + key + '\"' +
 			"}";
 	}
 
