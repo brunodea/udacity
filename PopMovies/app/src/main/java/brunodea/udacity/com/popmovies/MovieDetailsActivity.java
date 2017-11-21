@@ -91,6 +91,40 @@ public class MovieDetailsActivity extends AppCompatActivity {
             mMovieInfoModel = intent.getParcelableExtra(RESULT_MODEL_EXTRA);
         }
 
+        if (mMovieVideoAdapter.getResponseModel() == null && Util.isOnline(this)) {
+            mMovieVideoAdapter.queryVideos(String.valueOf(mMovieInfoModel.getId()),
+                    new MovieVideoAdapter.QueryCallback() {
+                        @Override
+                        public void onQueryStarted() {
+                            mPBLoadingVideos.setVisibility(View.VISIBLE);
+                            mTVVideoGlobal.setVisibility(View.VISIBLE);
+                            mRVMovieVideos.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onQueryFailure() {
+                            mPBLoadingVideos.setVisibility(View.GONE);
+                            mTVVideoGlobal.setVisibility(View.VISIBLE);
+                            mTVVideoGlobal.setText(R.string.error_loading_videos);
+                            mRVMovieVideos.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onQuerySuccess() {
+                            mPBLoadingVideos.setVisibility(View.GONE);
+                            mTVVideoGlobal.setVisibility(View.GONE);
+                            mRVMovieVideos.setVisibility(View.VISIBLE);
+                            mMovieVideoAdapter.notifyDataSetChanged();
+                        }
+                    }
+            );
+        } else {
+            mPBLoadingVideos.setVisibility(View.GONE);
+            mTVVideoGlobal.setVisibility(View.VISIBLE);
+            mTVVideoGlobal.setText(R.string.error_no_internet);
+            mRVMovieVideos.setVisibility(View.GONE);
+        }
+
         if (mMovieInfoModel != null) {
             loadMovieInfo();
         }
@@ -121,40 +155,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 mMovieVideoAdapter.setResponseModel(
                         (MovieVideoResponseModel) savedInstanceState.getParcelable(MOVIE_VIDEO_PARCELABLE_STATE_KEY)
                 );
-            } else {
-                if (Util.isOnline(this)) {
-                    mMovieVideoAdapter.queryVideos(String.valueOf(mMovieInfoModel.getId()),
-                            new MovieVideoAdapter.QueryCallback() {
-                                @Override
-                                public void onQueryStarted() {
-                                    mPBLoadingVideos.setVisibility(View.VISIBLE);
-                                    mTVVideoGlobal.setVisibility(View.VISIBLE);
-                                    mRVMovieVideos.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onQueryFailure() {
-                                    mPBLoadingVideos.setVisibility(View.GONE);
-                                    mTVVideoGlobal.setVisibility(View.VISIBLE);
-                                    mTVVideoGlobal.setText(R.string.error_loading_videos);
-                                    mRVMovieVideos.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onQuerySuccess() {
-                                    mPBLoadingVideos.setVisibility(View.GONE);
-                                    mTVVideoGlobal.setVisibility(View.GONE);
-                                    mRVMovieVideos.setVisibility(View.VISIBLE);
-                                    mMovieVideoAdapter.notifyDataSetChanged();
-                                }
-                            }
-                    );
-                } else {
-                    mPBLoadingVideos.setVisibility(View.GONE);
-                    mTVVideoGlobal.setVisibility(View.VISIBLE);
-                    mTVVideoGlobal.setText(R.string.error_no_internet);
-                    mRVMovieVideos.setVisibility(View.GONE);
-                }
             }
         }
     }
@@ -177,6 +177,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         );
 
         mIsFavorite = mFavoritesDB.isFavorite(mMovieInfoModel.getId());
+        adjustFavoriteStarDrawable();
         mIBFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

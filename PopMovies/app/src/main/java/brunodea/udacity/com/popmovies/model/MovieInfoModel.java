@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
@@ -66,8 +64,8 @@ public class MovieInfoModel implements Parcelable {
 	@SerializedName("title")
 	private String title;
 
-	@SerializedName("genre_ids")
-	private List<Integer> genreIds;
+	//@SerializedName("genre_ids")
+	//private List<Integer> genreIds;
 
 	@SerializedName("poster_path")
 	private String posterPath;
@@ -133,13 +131,13 @@ public class MovieInfoModel implements Parcelable {
 		return title;
 	}
 
-	public void setGenreIds(List<Integer> genreIds){
-		this.genreIds = genreIds;
-	}
+	//public void setGenreIds(List<Integer> genreIds){
+	//	this.genreIds = genreIds;
+	//}
 
-	public List<Integer> getGenreIds(){
-		return genreIds;
-	}
+	//public List<Integer> getGenreIds(){
+	//	return genreIds;
+	//}
 
 	public void setPosterPath(String posterPath){
 		this.posterPath = posterPath;
@@ -214,7 +212,7 @@ public class MovieInfoModel implements Parcelable {
 			",original_title = '" + originalTitle + '\'' + 
 			",video = '" + video + '\'' + 
 			",title = '" + title + '\'' + 
-			",genre_ids = '" + genreIds + '\'' + 
+			//",genre_ids = '" + genreIds + '\'' +
 			",poster_path = '" + posterPath + '\'' + 
 			",backdrop_path = '" + backdropPath + '\'' + 
 			",release_date = '" + releaseDate + '\'' + 

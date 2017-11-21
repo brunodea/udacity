@@ -23,7 +23,8 @@ public class FavoritesDB {
         MovieInfoModel model = null;
         if (c != null) {
             if (c.moveToFirst()) {
-                model = new Gson().fromJson(c.getString(2), MovieInfoModel.class);
+                String json = c.getString(1);
+                model = new Gson().fromJson(json, MovieInfoModel.class);
             }
             c.close();
         }
