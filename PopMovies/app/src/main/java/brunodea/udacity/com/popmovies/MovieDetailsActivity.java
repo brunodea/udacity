@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +15,14 @@ import android.text.Html;
 import android.text.Spanned;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import brunodea.udacity.com.popmovies.adapter.MovieVideoAdapter;
+import brunodea.udacity.com.popmovies.db.FavoritesDB;
 import brunodea.udacity.com.popmovies.model.MovieInfoModel;
 import brunodea.udacity.com.popmovies.model.MovieVideoModel;
 import brunodea.udacity.com.popmovies.model.MovieVideoResponseModel;
@@ -40,6 +43,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
     @BindView(R.id.details_toolbar) Toolbar mToolbar;
     @BindView(R.id.toolbar_layout) CollapsingToolbarLayout mToolbarLayout;
     @BindView(R.id.tv_goto_reviews) TextView mTVGotoReviews;
+    @BindView(R.id.ib_favorite) ImageButton mIBFavorite;
 
     @BindView(R.id.tv_movie_videos_global) TextView mTVVideoGlobal;
     @BindView(R.id.pb_loading_movie_videos) ProgressBar mPBLoadingVideos;
@@ -48,12 +52,18 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private MovieInfoModel mMovieInfoModel;
     private MovieVideoAdapter mMovieVideoAdapter;
 
+    private FavoritesDB mFavoritesDB;
+    private boolean mIsFavorite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         ButterKnife.bind(this);
         setSupportActionBar(mToolbar);
+
+        mFavoritesDB = new FavoritesDB(this);
+        mIsFavorite = false;
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -165,6 +175,28 @@ public class MovieDetailsActivity extends AppCompatActivity {
         mTVReleaseDate.setText(
                 fromHtml(getString(R.string.release_date, mMovieInfoModel.getReleaseDate()))
         );
+
+        mIsFavorite = mFavoritesDB.isFavorite(mMovieInfoModel.getId());
+        mIBFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mIsFavorite = !mIsFavorite;
+                adjustFavoriteStarDrawable();
+                if (mIsFavorite) {
+                    mFavoritesDB.insertMovieInfo(mMovieInfoModel);
+                } else {
+                    mFavoritesDB.deleteMovieInfo(mMovieInfoModel.getId());
+                }
+            }
+        });
+    }
+
+    private void adjustFavoriteStarDrawable() {
+        if (mIsFavorite) {
+            mIBFavorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_on));
+        } else {
+            mIBFavorite.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),android.R.drawable.btn_star_big_off));
+        }
     }
 
     @Override

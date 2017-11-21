@@ -39,6 +39,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MovieDetailsActivity" />
         </activity>
+        
+        <provider
+            android:authorities="brunodea.udacity.com.popmovies.db.FavoritesProvider"
+            android:name=".db.FavoritesProvider"/>
     </application>
-
 </manifest>
