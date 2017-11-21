@@ -130,7 +130,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
+        if (savedInstanceState != null &&
+                savedInstanceState.containsKey(MOVIE_LIST_PARCELABLE_STATE_KEY)) {
             mMovieInfoAdapter.setResponseModel(
                     (MovieInfoResponseModel) savedInstanceState.getParcelable(MOVIE_LIST_PARCELABLE_STATE_KEY)
             );
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         if (mCurrSortBy.equals(TheMovieDBAPI.SORTBY_FAVORITES)) {
-            reset_movie_list();
+            load_favorites();
         }
     }
 
@@ -188,12 +189,16 @@ public class MainActivity extends AppCompatActivity {
     }
     private void load_favorites() {
         mMovieInfoAdapter.reset();
+        mSwipeRefreshLayout.setEnabled(false);
         mEndlessScrollListener.resetState();
         MovieInfoResponseModel responseModel = new MovieInfoResponseModel(mFavoriteDB.getAllFavorites());
         mMovieInfoAdapter.setResponseModel(responseModel);
         mMovieInfoAdapter.notifyDataSetChanged();
         if (responseModel.getResults().isEmpty()) {
             mTVError.setText(R.string.no_favorites);
+            mTVError.setVisibility(View.VISIBLE);
+        } else {
+            mTVError.setVisibility(View.GONE);
         }
     }
 
