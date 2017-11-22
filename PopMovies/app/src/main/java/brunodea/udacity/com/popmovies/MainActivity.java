@@ -218,20 +218,24 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         String last_sort_by = mCurrSortBy;
+                        String sort_by_str = "";
                         switch (item.getItemId()) {
                             case R.id.action_sortby_popularity: {
                                 mCurrSortBy = TheMovieDBAPI.SORTBY_POPULARITY;
                                 mSwipeRefreshLayout.setEnabled(true);
+                                sort_by_str = "popularity";
                                 break;
                             }
                             case R.id.action_sortby_rating: {
                                 mCurrSortBy = TheMovieDBAPI.SORTBY_RATING;
                                 mSwipeRefreshLayout.setEnabled(true);
+                                sort_by_str = "rating";
                                 break;
                             }
                             case R.id.action_sortby_favorites: {
                                 mCurrSortBy = TheMovieDBAPI.SORTBY_FAVORITES;
                                 mSwipeRefreshLayout.setEnabled(false);
+                                sort_by_str = "favorites";
                                 break;
                             }
                             default: {
@@ -247,6 +251,9 @@ public class MainActivity extends AppCompatActivity {
 
                             reset_movie_list();
                             adjustSortByTitle();
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.already_sorted_by, sort_by_str),
+                                    Toast.LENGTH_LONG).show();
                         }
                         return true;
                     }
