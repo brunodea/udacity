@@ -16,6 +16,7 @@
             android:id="@+id/tv_original_title"
             android:textSize="@dimen/normalTextSize"
             app:layout_constraintLeft_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tv_release_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
