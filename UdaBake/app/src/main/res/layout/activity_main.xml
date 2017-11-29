@@ -3,5 +3,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:name="udabake.brunodea.com.udabake.ui.RecipeCardListFragment"
     tools:layout="@layout/fragment_recipecarditem_list"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
