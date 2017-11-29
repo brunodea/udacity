@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">UdaBake</string>
+    <string name="recipe_image_descr">Recipe image.</string>
 </resources>
