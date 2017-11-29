@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.UdabakeUtil;
 import udabake.brunodea.com.udabake.model.RecipeModel;
@@ -64,11 +64,7 @@ public class RecipeCardListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_recipecarditem_list, container, false);
-        //ButterKnife.bind(view);
-
-        mRVRecipes = view.findViewById(R.id.rv_recipes);
-        mPBLoadingRecipes = view.findViewById(R.id.pb_loading_recipes);
-        mTVMessage = view.findViewById(R.id.tv_message);
+        ButterKnife.bind(this, view);
 
         mRecipeItemAdapter = new RecipeItemAdapter(mOnRecipeItemClickListener);
 

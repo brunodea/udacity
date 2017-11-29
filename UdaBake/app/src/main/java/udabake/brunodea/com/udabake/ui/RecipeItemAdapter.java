@@ -76,6 +76,7 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
         if (mRecipeModels != null && mInflater != null) {
             // TODO: set all other holder stuff base on mRecipeModels.get(position).
             final RecipeModel model = mRecipeModels.get(position);
+
             holder.mRecipeModel = model;
             RecipesAPI.downloadImageToView(
                     mInflater.getContext(),
@@ -111,7 +112,7 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
 
         public ViewHolder(View view) {
             super(view);
-            ButterKnife.bind(view);
+            ButterKnife.bind(this, view);
         }
 
         @Override

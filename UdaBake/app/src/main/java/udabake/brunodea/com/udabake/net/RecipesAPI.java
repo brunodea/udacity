@@ -34,12 +34,14 @@ public class RecipesAPI {
     }
 
     public static void downloadImageToView(Context context, ImageView imageView, String imagePath) {
-        Picasso.with(context)
-                .load(imagePath)
-                .placeholder(new ColorDrawable(context.getResources()
-                        .getColor(android.R.color.white, context.getTheme())))
-                // TODO
-                //.error(R.mipmap.broken_image)
-                .into(imageView);
+        if (!imagePath.isEmpty()) {
+            Picasso.with(context)
+                    .load(imagePath)
+                    .placeholder(new ColorDrawable(context.getResources()
+                            .getColor(android.R.color.white, context.getTheme())))
+                    // TODO
+                    //.error(R.mipmap.broken_image)
+                    .into(imageView);
+        }
     }
 }
