@@ -116,7 +116,6 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
 
         @BindView(R.id.iv_recipe_item_image) ImageView mRecipeImage;
         @BindView(R.id.tv_recipe_item_name) TextView mRecipeName;
-        @BindView(R.id.tv_recipe_item_servings) TextView mItemServings;
 
         public ViewHolder(View view) {
             super(view);
