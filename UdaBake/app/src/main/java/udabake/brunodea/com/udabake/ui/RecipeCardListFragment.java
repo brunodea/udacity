@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
@@ -25,8 +27,9 @@ import udabake.brunodea.com.udabake.model.RecipeModel;
  * interface.
  */
 public class RecipeCardListFragment extends Fragment {
-
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String RECIPES_PARCELABLE_KEY = "recipes_parcelable";
+
     private int mColumnCount = 1;
     private OnRecipeItemClickListener mOnRecipeItemClickListener;
     private RecipeItemAdapter mRecipeItemAdapter;
@@ -77,6 +80,17 @@ public class RecipeCardListFragment extends Fragment {
         mRVRecipes.setHasFixedSize(true);
         mRVRecipes.setAdapter(mRecipeItemAdapter);
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(RECIPES_PARCELABLE_KEY)) {
+            ArrayList<RecipeModel> models = savedInstanceState.getParcelableArrayList(RECIPES_PARCELABLE_KEY);
+            mRecipeItemAdapter.setRecipeModels(models);
+        } else {
+            loadRecipesFromWeb();
+        }
+
+        return view;
+    }
+
+    private void loadRecipesFromWeb() {
         if (UdabakeUtil.isOnline(getContext())) {
             mRecipeItemAdapter.queryRecipes(new RecipeItemAdapter.QueryCallback() {
                 @Override
@@ -107,9 +121,7 @@ public class RecipeCardListFragment extends Fragment {
             mTVMessage.setVisibility(View.VISIBLE);
             mTVMessage.setText(R.string.no_internet);
         }
-        return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -126,6 +138,12 @@ public class RecipeCardListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mOnRecipeItemClickListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(RECIPES_PARCELABLE_KEY, mRecipeItemAdapter.getRecipeModels());
+        super.onSaveInstanceState(outState);
     }
 
     public interface OnRecipeItemClickListener {

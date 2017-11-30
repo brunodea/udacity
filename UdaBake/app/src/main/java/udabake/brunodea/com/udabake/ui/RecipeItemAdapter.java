@@ -36,6 +36,15 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
         mRecipeModels = null;
     }
 
+    public void setRecipeModels(ArrayList<RecipeModel> recipes) {
+        mRecipeModels = recipes;
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<RecipeModel> getRecipeModels() {
+        return mRecipeModels;
+    }
+
     public void queryRecipes(final QueryCallback callback) {
         if (mRecipeModels == null) {
             Log.i(TAG, "Started querying for recipes.");
@@ -84,7 +93,6 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
                     model.getImage()
             );
             holder.mRecipeName.setText(model.getName());
-            holder.mItemServings.setText(String.valueOf(model.getServings()));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

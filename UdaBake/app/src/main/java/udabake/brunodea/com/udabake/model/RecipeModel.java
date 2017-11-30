@@ -1,13 +1,43 @@
 package udabake.brunodea.com.udabake.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
-public class RecipeModel {
+public class RecipeModel implements Parcelable {
+
+    public RecipeModel(Parcel in) {
+        image = in.readString();
+        servings = in.readInt();
+        name = in.readString();
+        ingredients = new ArrayList<>();
+        in.readTypedList(ingredients, RecipeIngredientModel.CREATOR);
+        id = in.readInt();
+        steps = new ArrayList<>();
+        in.readTypedList(steps, RecipeStepModel.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(image);
+        parcel.writeInt(servings);
+        parcel.writeString(name);
+        parcel.writeTypedList(ingredients);
+        parcel.writeInt(id);
+        parcel.writeTypedList(steps);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
 	@SerializedName("image")
 	private String image;
