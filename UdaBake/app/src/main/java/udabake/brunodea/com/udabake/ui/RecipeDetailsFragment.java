@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -28,23 +29,36 @@ import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeStepModel;
 
 public class RecipeDetailsFragment extends Fragment {
-    public static final String RECIPE_STEP_MODEL_ARG = "recipe_step_model_arg";
+    private static final String RECIPE_STEP_MODEL_ARG = "recipe_step_model_arg";
+    private static final String RECIPE_STEP_POS_ARG = "recipe_step_pos_arg";
 
     @BindView(R.id.tv_step_description) TextView mTVStepDescription;
     @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
+    @BindView(R.id.bt_next_step) Button mBTNext;
+    @BindView(R.id.bt_previous_step) Button mBTPrev;
 
     private SimpleExoPlayer mExoPlayer;
 
     private RecipeStepModel mRecipeStepModel;
+    private OnActionListener mOnActionListener;
+
+    public enum StepPosition {
+        First,
+        Last,
+        Other,
+    }
+
+    private StepPosition mStepPosition;
 
     public RecipeDetailsFragment() {
     }
 
-    @SuppressWarnings("unused")
-    public static RecipeDetailsFragment newInstance(RecipeStepModel model) {
+    // Steps position start from 0.
+    public static RecipeDetailsFragment newInstance(RecipeStepModel model, StepPosition position) {
         RecipeDetailsFragment frag = new RecipeDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_MODEL_ARG, model);
+        args.putString(RECIPE_STEP_POS_ARG, position.toString());
         frag.setArguments(args);
         return frag;
     }
@@ -56,6 +70,7 @@ public class RecipeDetailsFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             mRecipeStepModel = args.getParcelable(RECIPE_STEP_MODEL_ARG);
+            mStepPosition = StepPosition.valueOf(args.getString(RECIPE_STEP_POS_ARG));
         }
     }
 
@@ -71,6 +86,22 @@ public class RecipeDetailsFragment extends Fragment {
             Uri uri = new Uri.Builder().path(video_url).build();
             initializePlayer(uri);
         }
+
+        mBTPrev.setEnabled(mStepPosition != StepPosition.First);
+        mBTNext.setEnabled(mStepPosition != StepPosition.Last);
+
+        mBTPrev.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnActionListener.onButtonPrevStepClicked();
+            }
+        });
+        mBTNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnActionListener.onButtonNextStepClicked();
+            }
+        });
 
         return view;
     }
@@ -101,11 +132,22 @@ public class RecipeDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnActionListener) {
+            mOnActionListener = (OnActionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
-        super.onDetach();
         releasePlayer();
+        super.onDetach();
+    }
+
+    public interface OnActionListener {
+        void onButtonPrevStepClicked();
+        void onButtonNextStepClicked();
     }
 }

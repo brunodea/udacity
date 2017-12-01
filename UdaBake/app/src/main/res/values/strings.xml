@@ -4,4 +4,8 @@
     <string name="no_internet">No Internet connection.</string>
     <string name="query_fail">Failed to load recipes.</string>
     <string name="error_no_steps">Something is wrong. This recipe has no steps!</string>
+    <string name="next_step">Next</string>
+    <string name="prev_step">Previous</string>
+    <string name="ingredient_quantity"><b>Quantity:</b>%d %s</string>
+    <string name="ingredients">Ingredients</string>
 </resources>

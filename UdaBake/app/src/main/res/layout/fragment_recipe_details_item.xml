@@ -20,4 +20,24 @@
         app:layout_constraintRight_toLeftOf="parent"
         app:layout_constraintLeft_toRightOf="parent"/>
 
+    <Button
+        android:id="@+id/bt_previous_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/prev_step"
+        app:layout_constraintRight_toLeftOf="@id/bt_next_step"
+        app:layout_constraintTop_toBottomOf="@id/tv_step_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"/>
+
+    <Button
+        android:id="@+id/bt_next_step"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/next_step"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_step_description"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/bt_previous_step"/>
+
 </android.support.constraint.ConstraintLayout>

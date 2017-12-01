@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import udabake.brunodea.com.udabake.model.RecipeModel;
 import udabake.brunodea.com.udabake.ui.RecipeCardListFragment;
-import udabake.brunodea.com.udabake.ui.RecipeDetailsFragment;
 
 public class MainActivity extends AppCompatActivity implements RecipeCardListFragment.OnRecipeItemClickListener {
 
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements RecipeCardListFra
             Toast.makeText(this, R.string.error_no_steps, Toast.LENGTH_LONG).show();
         } else {
             Intent intent = new Intent(this, RecipeDetailsActivity.class);
-            intent.putExtra(RecipeDetailsFragment.RECIPE_STEP_MODEL_ARG, recipe.getSteps().get(0));
+            intent.putExtra(RecipeDetailsActivity.RECIPE_MODEL_EXTRA, recipe);
             startActivity(intent);
         }
     }

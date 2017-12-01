@@ -13,7 +13,6 @@
 
     <TextView android:id="@+id/tv_message"
         android:layout_gravity="center"
-        android:text="test"
         android:textColor="@color/secondaryText"
         android:textSize="@dimen/big_text"
         android:visibility="gone"
