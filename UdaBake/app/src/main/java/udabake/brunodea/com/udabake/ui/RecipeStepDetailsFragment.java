@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeStepModel;
 
-public class RecipeDetailsFragment extends Fragment {
+public class RecipeStepDetailsFragment extends Fragment {
     private static final String RECIPE_STEP_MODEL_ARG = "recipe_step_model_arg";
     private static final String RECIPE_STEP_POS_ARG = "recipe_step_pos_arg";
 
@@ -50,12 +50,12 @@ public class RecipeDetailsFragment extends Fragment {
 
     private StepPosition mStepPosition;
 
-    public RecipeDetailsFragment() {
+    public RecipeStepDetailsFragment() {
     }
 
     // Steps position start from 0.
-    public static RecipeDetailsFragment newInstance(RecipeStepModel model, StepPosition position) {
-        RecipeDetailsFragment frag = new RecipeDetailsFragment();
+    public static RecipeStepDetailsFragment newInstance(RecipeStepModel model, StepPosition position) {
+        RecipeStepDetailsFragment frag = new RecipeStepDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_MODEL_ARG, model);
         args.putString(RECIPE_STEP_POS_ARG, position.toString());
@@ -83,8 +83,7 @@ public class RecipeDetailsFragment extends Fragment {
         mTVStepDescription.setText(mRecipeStepModel.getDescription());
         String video_url = mRecipeStepModel.getVideoURL();
         if (video_url != null && !video_url.isEmpty()) {
-            Uri uri = new Uri.Builder().path(video_url).build();
-            initializePlayer(uri);
+            initializePlayer(Uri.parse(video_url));
         }
 
         mBTPrev.setEnabled(mStepPosition != StepPosition.First);

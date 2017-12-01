@@ -8,10 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import udabake.brunodea.com.udabake.model.RecipeModel;
 import udabake.brunodea.com.udabake.model.RecipeStepModel;
-import udabake.brunodea.com.udabake.ui.RecipeDetailsFragment;
+import udabake.brunodea.com.udabake.ui.RecipeStepDetailsFragment;
 
 public class RecipeStepDetailsActivity extends AppCompatActivity
-        implements RecipeDetailsFragment.OnActionListener {
+        implements RecipeStepDetailsFragment.OnActionListener {
     public static String RECIPE_MODEL_EXTRA = "recipe_model_extra";
     public static String RECIPE_STEP_POS = "recipe_step_pos";
 
@@ -57,14 +57,14 @@ public class RecipeStepDetailsActivity extends AppCompatActivity
 
     private void replaceDetailsFragmentToCurrStep() {
         RecipeStepModel step = mRecipeModel.getSteps().get(mCurrStep);
-        RecipeDetailsFragment.StepPosition pos =
+        RecipeStepDetailsFragment.StepPosition pos =
                 mCurrStep == 0 ?
-                        RecipeDetailsFragment.StepPosition.First :
+                        RecipeStepDetailsFragment.StepPosition.First :
                 mCurrStep == mNumSteps - 1 ?
-                        RecipeDetailsFragment.StepPosition.Last :
-                        RecipeDetailsFragment.StepPosition.Other;
+                        RecipeStepDetailsFragment.StepPosition.Last :
+                        RecipeStepDetailsFragment.StepPosition.Other;
 
-        RecipeDetailsFragment frag = RecipeDetailsFragment.newInstance(step, pos);
+        RecipeStepDetailsFragment frag = RecipeStepDetailsFragment.newInstance(step, pos);
 
         FragmentManager mgr = getSupportFragmentManager();
         mgr.beginTransaction()
