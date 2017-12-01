@@ -27,6 +27,6 @@
         android:visibility="gone"
         app:layoutManager="LinearLayoutManager"
         tools:context="udabake.brunodea.com.udabake.ui.RecipeCardListFragment"
-        tools:listitem="@layout/fragment_recipecarditem"/>
+        tools:listitem="@layout/fragment_recipe_card_item"/>
 
 </FrameLayout>

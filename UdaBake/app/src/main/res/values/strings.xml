@@ -3,4 +3,5 @@
     <string name="recipe_image_descr">Recipe image.</string>
     <string name="no_internet">No Internet connection.</string>
     <string name="query_fail">Failed to load recipes.</string>
+    <string name="error_no_steps">Something is wrong. This recipe has no steps!</string>
 </resources>

@@ -35,6 +35,8 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.google.android.exoplayer:exoplayer:r2.2.0'
+    compile 'com.android.support:design:26.1.0'
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

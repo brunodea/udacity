@@ -34,6 +34,19 @@ public class RecipeModel implements Parcelable {
         parcel.writeTypedList(steps);
     }
 
+    static final Parcelable.Creator<RecipeModel> CREATOR
+            = new Parcelable.Creator<RecipeModel>() {
+        @Override
+        public RecipeModel createFromParcel(Parcel parcel) {
+            return new RecipeModel(parcel);
+        }
+
+        @Override
+        public RecipeModel[] newArray(int size) {
+            return new RecipeModel[size];
+        }
+    };
+
     @Override
     public int describeContents() {
         return 0;

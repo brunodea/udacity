@@ -1,8 +1,8 @@
 package udabake.brunodea.com.udabake.ui;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -66,7 +66,7 @@ public class RecipeCardListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.fragment_recipecarditem_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recipe_card_item_list, container, false);
         ButterKnife.bind(this, view);
 
         mRecipeItemAdapter = new RecipeItemAdapter(mOnRecipeItemClickListener);
