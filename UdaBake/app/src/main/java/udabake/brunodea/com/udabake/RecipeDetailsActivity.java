@@ -3,6 +3,7 @@ package udabake.brunodea.com.udabake;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -33,7 +34,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mRecipeModel = intent.getParcelableExtra(RECIPE_MODEL_EXTRA);
         getSupportActionBar().setTitle(mRecipeModel.getName());
-        final RecipeStepsAdapter adapter = new RecipeStepsAdapter(mRecipeModel.getSteps(), new RecipeStepsAdapter.OnRecipeStepClickListener() {
+        final RecipeStepsAdapter adapter = new RecipeStepsAdapter(this, mRecipeModel.getSteps(), new RecipeStepsAdapter.OnRecipeStepClickListener() {
             @Override
             public void onStepClick(RecipeStepModel model, int position) {
                 Intent intent = new Intent(RecipeDetailsActivity.this, RecipeInfoDetailsActivity.class);
@@ -54,5 +55,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRVSteps.getContext(),
+                LinearLayoutManager.VERTICAL);
+        mRVSteps.addItemDecoration(dividerItemDecoration);
     }
 }

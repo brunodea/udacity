@@ -1,5 +1,6 @@
 package udabake.brunodea.com.udabake.ui;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,9 +21,12 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
     private LayoutInflater mInflater;
     private OnRecipeStepClickListener mOnRecipeStepClickListener;
 
-    public RecipeStepsAdapter(List<RecipeStepModel> steps, OnRecipeStepClickListener listener) {
+    private Context mContext;
+
+    public RecipeStepsAdapter(Context context, List<RecipeStepModel> steps, OnRecipeStepClickListener listener) {
         mRecipeStepModels = steps;
         mOnRecipeStepClickListener = listener;
+        mContext = context;
     }
 
     @Override
@@ -37,7 +41,8 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         if (mRecipeStepModels != null && mInflater != null) {
             final RecipeStepModel model = mRecipeStepModels.get(position);
 
-            holder.mTVStepShort.setText(model.getShortDescription());
+            holder.mTVStepShort.setText(mContext.getString(R.string.step_short, position + 1,
+                    model.getShortDescription()));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

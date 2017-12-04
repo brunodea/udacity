@@ -8,4 +8,5 @@
     <string name="prev_step">Previous</string>
     <string name="ingredient_quantity">Quantity: %.2f %s</string>
     <string name="ingredients">Ingredients</string>
+    <string name="step_short">%d. %s</string>
 </resources>
