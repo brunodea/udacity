@@ -44,11 +44,6 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         Intent intent = getIntent();
         mRecipeModel = intent.getParcelableExtra(RECIPE_MODEL_EXTRA);
 
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle(mRecipeModel.getName());
-        }
-
         if (intent.getBooleanExtra(RECIPE_IS_INGREDIENTS_EXTRA, false)) {
             mRecipeInfoToShow = RecipeInfoToShow.Ingredients;
         } else {
@@ -68,6 +63,22 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         }
 
         replaceDetailsFragmentToCurrStep();
+    }
+
+    private void updateActionBarTitle() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            switch (mRecipeInfoToShow) {
+                case StepDetails: {
+                    actionBar.setTitle(getString(R.string.step_title, mCurrStep, mRecipeModel.getName()));
+                }
+                break;
+                case Ingredients: {
+                    actionBar.setTitle(getString(R.string.ingredients_title, mRecipeModel.getName()));
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -100,6 +111,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
     }
 
     private void replaceDetailsFragmentToCurrStep() {
+        updateActionBarTitle();
         FragmentManager mgr = getSupportFragmentManager();
         FragmentTransaction transaction = mgr.beginTransaction();
         switch (mRecipeInfoToShow) {

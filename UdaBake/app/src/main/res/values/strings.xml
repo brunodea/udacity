@@ -9,4 +9,6 @@
     <string name="ingredient_quantity">Quantity: %.2f %s</string>
     <string name="ingredients">Ingredients</string>
     <string name="step_short">%d. %s</string>
+    <string name="step_title">Step %d - %s</string>
+    <string name="ingredients_title">Ingredients - %s</string>
 </resources>
