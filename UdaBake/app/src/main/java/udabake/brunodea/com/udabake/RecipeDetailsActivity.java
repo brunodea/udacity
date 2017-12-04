@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.Button;
 
 import butterknife.BindView;
@@ -35,14 +36,23 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         final RecipeStepsAdapter adapter = new RecipeStepsAdapter(mRecipeModel.getSteps(), new RecipeStepsAdapter.OnRecipeStepClickListener() {
             @Override
             public void onStepClick(RecipeStepModel model, int position) {
-                Intent intent = new Intent(RecipeDetailsActivity.this, RecipeStepDetailsActivity.class);
-                intent.putExtra(RecipeStepDetailsActivity.RECIPE_STEP_POS, position);
-                intent.putExtra(RecipeStepDetailsActivity.RECIPE_MODEL_EXTRA, mRecipeModel);
+                Intent intent = new Intent(RecipeDetailsActivity.this, RecipeInfoDetailsActivity.class);
+                intent.putExtra(RecipeInfoDetailsActivity.RECIPE_STEP_POS, position);
+                intent.putExtra(RecipeInfoDetailsActivity.RECIPE_MODEL_EXTRA, mRecipeModel);
                 startActivity(intent);
             }
         });
         mRVSteps.setLayoutManager(new LinearLayoutManager(this));
         mRVSteps.setHasFixedSize(true);
         mRVSteps.setAdapter(adapter);
+        mBTGotoIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(RecipeDetailsActivity.this, RecipeInfoDetailsActivity.class);
+                intent.putExtra(RecipeInfoDetailsActivity.RECIPE_MODEL_EXTRA, mRecipeModel);
+                intent.putExtra(RecipeInfoDetailsActivity.RECIPE_IS_INGREDIENTS_EXTRA, true);
+                startActivity(intent);
+            }
+        });
     }
 }

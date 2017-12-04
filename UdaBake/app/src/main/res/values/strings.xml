@@ -6,6 +6,6 @@
     <string name="error_no_steps">Something is wrong. This recipe has no steps!</string>
     <string name="next_step">Next</string>
     <string name="prev_step">Previous</string>
-    <string name="ingredient_quantity"><b>Quantity:</b>%d %s</string>
+    <string name="ingredient_quantity">Quantity: %.2f %s</string>
     <string name="ingredients">Ingredients</string>
 </resources>
