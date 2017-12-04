@@ -35,6 +35,7 @@ import udabake.brunodea.com.udabake.model.RecipeStepModel;
 public class RecipeStepDetailsFragment extends Fragment {
     private static final String RECIPE_STEP_MODEL_ARG = "recipe_step_model_arg";
     private static final String RECIPE_STEP_POS_ARG = "recipe_step_pos_arg";
+    private static final String VIDEO_POSITION = "start_video_position";
 
     @BindView(R.id.tv_step_description) TextView mTVStepDescription;
     @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
@@ -45,6 +46,7 @@ public class RecipeStepDetailsFragment extends Fragment {
 
     private RecipeStepModel mRecipeStepModel;
     private OnActionListener mOnActionListener;
+    private long mStartPosition;
 
     public enum StepPosition {
         First,
@@ -58,11 +60,14 @@ public class RecipeStepDetailsFragment extends Fragment {
     }
 
     // Steps position start from 0.
-    public static RecipeStepDetailsFragment newInstance(RecipeStepModel model, StepPosition position) {
+    public static RecipeStepDetailsFragment newInstance(RecipeStepModel model, StepPosition position,
+                                                        long start_position) {
         RecipeStepDetailsFragment frag = new RecipeStepDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_MODEL_ARG, model);
         args.putString(RECIPE_STEP_POS_ARG, position.toString());
+        args.putLong(VIDEO_POSITION, start_position);
+
         frag.setArguments(args);
         return frag;
     }
@@ -75,6 +80,7 @@ public class RecipeStepDetailsFragment extends Fragment {
         if (args != null) {
             mRecipeStepModel = args.getParcelable(RECIPE_STEP_MODEL_ARG);
             mStepPosition = StepPosition.valueOf(args.getString(RECIPE_STEP_POS_ARG));
+            mStartPosition = args.getLong(VIDEO_POSITION);
         }
     }
 
@@ -111,7 +117,7 @@ public class RecipeStepDetailsFragment extends Fragment {
 
     private void initializePlayer(Uri mediaUri) {
         if (mExoPlayer == null) {
-            TrackSelection.Factory videoTrackSelectionFactory =
+                TrackSelection.Factory videoTrackSelectionFactory =
                     new AdaptiveVideoTrackSelection.Factory(null);
             TrackSelector trackSelector =
                     new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -125,6 +131,7 @@ public class RecipeStepDetailsFragment extends Fragment {
             MediaSource videoSource = new ExtractorMediaSource(mediaUri, dataSourceFactory,
                     extractorsFactory, null, null);
             mExoPlayer.prepare(videoSource);
+            mExoPlayer.seekTo(mStartPosition);
             mExoPlayerView.setPlayer(mExoPlayer);
         }
     }
@@ -135,6 +142,10 @@ public class RecipeStepDetailsFragment extends Fragment {
             mExoPlayer.release();
             mExoPlayer = null;
         }
+    }
+
+    public long videoPosition() {
+        return mExoPlayer.getCurrentPosition();
     }
 
     @Override

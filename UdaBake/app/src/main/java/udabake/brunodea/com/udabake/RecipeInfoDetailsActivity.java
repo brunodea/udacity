@@ -18,10 +18,14 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
     public static String RECIPE_STEP_POS = "recipe_step_pos";
     public static String RECIPE_IS_INGREDIENTS_EXTRA = "recipe_is_ingredients_extra";
 
+    private static String VIDEO_POSITION = "video_position";
+
     private RecipeModel mRecipeModel;
+    private RecipeStepDetailsFragment mStepDetailsFrag;
 
     private int mCurrStep;
     private int mNumSteps;
+    private long mVideoPosition;
 
     enum RecipeInfoToShow {
         StepDetails,
@@ -50,7 +54,17 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         } else {
             mRecipeInfoToShow = RecipeInfoToShow.StepDetails;
             mNumSteps = mRecipeModel.getSteps().size();
-            mCurrStep = intent.getIntExtra(RECIPE_STEP_POS, 0);
+            if (savedInstanceState != null && savedInstanceState.containsKey(RECIPE_STEP_POS)) {
+                mCurrStep = savedInstanceState.getInt(RECIPE_STEP_POS);
+            } else {
+                mCurrStep = intent.getIntExtra(RECIPE_STEP_POS, 0);
+            }
+
+            if (savedInstanceState != null && savedInstanceState.containsKey(VIDEO_POSITION)) {
+                mVideoPosition = savedInstanceState.getLong(VIDEO_POSITION);
+            } else {
+                mVideoPosition = 0;
+            }
         }
 
         replaceDetailsFragmentToCurrStep();
@@ -72,6 +86,19 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        switch (mRecipeInfoToShow) {
+            case StepDetails: {
+                outState.putInt(RECIPE_STEP_POS, mCurrStep);
+                outState.putLong(VIDEO_POSITION, mStepDetailsFrag.videoPosition());
+            }
+            break;
+            default: break;
+        }
+        super.onSaveInstanceState(outState);
+    }
+
     private void replaceDetailsFragmentToCurrStep() {
         FragmentManager mgr = getSupportFragmentManager();
         FragmentTransaction transaction = mgr.beginTransaction();
@@ -85,8 +112,8 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
                                         RecipeStepDetailsFragment.StepPosition.Last :
                                         RecipeStepDetailsFragment.StepPosition.Other;
 
-                RecipeStepDetailsFragment frag = RecipeStepDetailsFragment.newInstance(step, pos);
-                transaction.replace(R.id.frame_fragment_container, frag);
+                mStepDetailsFrag = RecipeStepDetailsFragment.newInstance(step, pos, mVideoPosition);
+                transaction.replace(R.id.frame_fragment_container, mStepDetailsFrag);
             }
             break;
             case Ingredients: {
