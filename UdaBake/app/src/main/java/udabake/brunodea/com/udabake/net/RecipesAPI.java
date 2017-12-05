@@ -14,6 +14,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeModel;
 
 public class RecipesAPI {
@@ -39,8 +40,7 @@ public class RecipesAPI {
                     .load(imagePath)
                     .placeholder(new ColorDrawable(context.getResources()
                             .getColor(android.R.color.white, context.getTheme())))
-                    // TODO
-                    //.error(R.mipmap.broken_image)
+                    .error(R.drawable.default_recipe_image)
                     .into(imageView);
         }
     }

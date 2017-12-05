@@ -1,7 +1,6 @@
 package udabake.brunodea.com.udabake.ui;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -32,6 +31,7 @@ import com.google.android.exoplayer2.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
+import udabake.brunodea.com.udabake.UdabakeUtil;
 import udabake.brunodea.com.udabake.model.RecipeStepModel;
 
 public class RecipeStepDetailsFragment extends Fragment {
@@ -97,7 +97,7 @@ public class RecipeStepDetailsFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_recipe_details_item, container, false);
         ButterKnife.bind(this, view);
 
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (!UdabakeUtil.isLandscape(getContext())) {
             mTVStepDescription.setText(mRecipeStepModel.getDescription());
 
             mBTPrev.setEnabled(mStepPosition != StepPosition.First);
@@ -178,6 +178,7 @@ public class RecipeStepDetailsFragment extends Fragment {
     }
 
     public long videoPosition() {
+        if (!isAdded()) return 0;
         return mExoPlayer.getCurrentPosition();
     }
 

@@ -11,7 +11,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
+        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+            android:id="@+id/exo_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/video_portrait_height"
+            android:background="@android:color/black"/>
 
         <TextView
             android:id="@+id/tv_no_video"
@@ -20,13 +26,7 @@
             android:layout_gravity="center"
             android:text="@string/no_step_video"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
-
-        <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-            android:id="@+id/exo_player_view"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/video_portrait_height"
-            android:background="@android:color/black"/>
+            android:layout_height="wrap_content" />
     </FrameLayout>
 
     <TextView
@@ -36,7 +36,6 @@
         android:layout_margin="@dimen/default_layout_margin"
         android:padding="@dimen/default_layout_padding"
         app:layout_constraintTop_toBottomOf="@id/frame_exoplayer"
-        app:layout_constraintBottom_toTopOf="@id/bt_previous_step"
         app:layout_constraintRight_toLeftOf="parent"
         app:layout_constraintLeft_toRightOf="parent"/>
 
