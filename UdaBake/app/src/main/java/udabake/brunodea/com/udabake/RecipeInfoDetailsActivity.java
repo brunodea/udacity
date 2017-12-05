@@ -14,6 +14,7 @@ import udabake.brunodea.com.udabake.ui.RecipeStepDetailsFragment;
 
 public class RecipeInfoDetailsActivity extends AppCompatActivity
         implements RecipeStepDetailsFragment.OnActionListener {
+    private static String TAG = "RecipeInfoDetailsActivity";
     public static String RECIPE_MODEL_EXTRA = "recipe_model_extra";
     public static String RECIPE_STEP_POS = "recipe_step_pos";
     public static String RECIPE_IS_INGREDIENTS_EXTRA = "recipe_is_ingredients_extra";
@@ -42,24 +43,29 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         // if the intent is null or doesn't have the extra, there was a programmer error, so the
         // app should indeed fail!
         Intent intent = getIntent();
-        mRecipeModel = intent.getParcelableExtra(RECIPE_MODEL_EXTRA);
-
         if (intent.getBooleanExtra(RECIPE_IS_INGREDIENTS_EXTRA, false)) {
             mRecipeInfoToShow = RecipeInfoToShow.Ingredients;
         } else {
             mRecipeInfoToShow = RecipeInfoToShow.StepDetails;
-            mNumSteps = mRecipeModel.getSteps().size();
-            if (savedInstanceState != null && savedInstanceState.containsKey(RECIPE_STEP_POS)) {
-                mCurrStep = savedInstanceState.getInt(RECIPE_STEP_POS);
-            } else {
-                mCurrStep = intent.getIntExtra(RECIPE_STEP_POS, 0);
-            }
+        }
 
-            if (savedInstanceState != null && savedInstanceState.containsKey(VIDEO_POSITION)) {
-                mVideoPosition = savedInstanceState.getLong(VIDEO_POSITION);
-            } else {
-                mVideoPosition = 0;
-            }
+        mRecipeModel = intent.getParcelableExtra(RECIPE_MODEL_EXTRA);
+        switch (mRecipeInfoToShow) {
+            case StepDetails: {
+                mNumSteps = mRecipeModel.getSteps().size();
+                if (savedInstanceState != null && savedInstanceState.containsKey(RECIPE_STEP_POS)) {
+                    mCurrStep = savedInstanceState.getInt(RECIPE_STEP_POS);
+                } else {
+                    mCurrStep = intent.getIntExtra(RECIPE_STEP_POS, 0);
+                }
+
+                if (savedInstanceState != null && savedInstanceState.containsKey(VIDEO_POSITION)) {
+                    mVideoPosition = savedInstanceState.getLong(VIDEO_POSITION);
+                } else {
+                    mVideoPosition = 0;
+                }
+            } break;
+            case Ingredients: break;
         }
 
         replaceDetailsFragmentToCurrStep();
@@ -70,13 +76,11 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         if (actionBar != null) {
             switch (mRecipeInfoToShow) {
                 case StepDetails: {
-                    actionBar.setTitle(getString(R.string.step_title, mCurrStep, mRecipeModel.getName()));
-                }
-                break;
+                    actionBar.setTitle(getString(R.string.step_title, mCurrStep + 1, mRecipeModel.getName()));
+                } break;
                 case Ingredients: {
                     actionBar.setTitle(getString(R.string.ingredients_title, mRecipeModel.getName()));
-                }
-                break;
+                } break;
             }
         }
     }
@@ -103,9 +107,8 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
             case StepDetails: {
                 outState.putInt(RECIPE_STEP_POS, mCurrStep);
                 outState.putLong(VIDEO_POSITION, mStepDetailsFrag.videoPosition());
-            }
-            break;
-            default: break;
+            } break;
+            case Ingredients: break;
         }
         super.onSaveInstanceState(outState);
     }
@@ -126,13 +129,11 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
 
                 mStepDetailsFrag = RecipeStepDetailsFragment.newInstance(step, pos, mVideoPosition);
                 transaction.replace(R.id.frame_fragment_container, mStepDetailsFrag);
-            }
-            break;
+            } break;
             case Ingredients: {
                 RecipeIngredientFragment frag = RecipeIngredientFragment.newInstance(mRecipeModel);
                 transaction.replace(R.id.frame_fragment_container, frag);
-            }
-            break;
+            } break;
         }
 
         transaction.commit();

@@ -1,8 +1,10 @@
 package udabake.brunodea.com.udabake.ui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +40,10 @@ public class RecipeStepDetailsFragment extends Fragment {
     private static final String VIDEO_POSITION = "start_video_position";
 
     @BindView(R.id.tv_step_description) TextView mTVStepDescription;
-    @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
     @BindView(R.id.bt_next_step) Button mBTNext;
     @BindView(R.id.bt_previous_step) Button mBTPrev;
 
+    @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
     private SimpleExoPlayer mExoPlayer;
 
     private RecipeStepModel mRecipeStepModel;
@@ -90,27 +92,48 @@ public class RecipeStepDetailsFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_recipe_details_item, container, false);
         ButterKnife.bind(this, view);
 
-        mTVStepDescription.setText(mRecipeStepModel.getDescription());
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mTVStepDescription.setText(mRecipeStepModel.getDescription());
+
+            mBTPrev.setEnabled(mStepPosition != StepPosition.First);
+            mBTNext.setEnabled(mStepPosition != StepPosition.Last);
+
+            mBTPrev.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnActionListener.onButtonPrevStepClicked();
+                }
+            });
+            mBTNext.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnActionListener.onButtonNextStepClicked();
+                }
+            });
+        } else {
+            // Only the video player should be visible in landscape mode!
+            mTVStepDescription.setVisibility(View.GONE);
+            mBTNext.setVisibility(View.GONE);
+            mBTPrev.setVisibility(View.GONE);
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mExoPlayerView.getLayoutParams();
+            params.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
+            params.height = ConstraintLayout.LayoutParams.MATCH_PARENT;
+            mExoPlayerView.setLayoutParams(params);
+            mExoPlayerView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |// hide nav bar
+                View.SYSTEM_UI_FLAG_FULLSCREEN |// hide status bar
+                View.SYSTEM_UI_FLAG_IMMERSIVE
+            );
+        }
+
+        // ExoPlayer exists in all orientations.
         String video_url = mRecipeStepModel.getVideoURL();
         if (video_url != null && !video_url.isEmpty()) {
             initializePlayer(Uri.parse(video_url));
         }
-
-        mBTPrev.setEnabled(mStepPosition != StepPosition.First);
-        mBTNext.setEnabled(mStepPosition != StepPosition.Last);
-
-        mBTPrev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mOnActionListener.onButtonPrevStepClicked();
-            }
-        });
-        mBTNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mOnActionListener.onButtonNextStepClicked();
-            }
-        });
 
         return view;
     }
