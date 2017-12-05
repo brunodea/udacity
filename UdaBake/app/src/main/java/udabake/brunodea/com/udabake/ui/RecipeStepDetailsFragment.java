@@ -4,12 +4,12 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -38,10 +38,12 @@ public class RecipeStepDetailsFragment extends Fragment {
     private static final String RECIPE_STEP_MODEL_ARG = "recipe_step_model_arg";
     private static final String RECIPE_STEP_POS_ARG = "recipe_step_pos_arg";
     private static final String VIDEO_POSITION = "start_video_position";
+    private static final String VIDEO_HEIGHT_ARG = "video_height";
 
     @BindView(R.id.tv_step_description) TextView mTVStepDescription;
     @BindView(R.id.bt_next_step) Button mBTNext;
     @BindView(R.id.bt_previous_step) Button mBTPrev;
+    @BindView(R.id.tv_no_video) TextView mTVNoVideo;
 
     @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
     private SimpleExoPlayer mExoPlayer;
@@ -49,6 +51,7 @@ public class RecipeStepDetailsFragment extends Fragment {
     private RecipeStepModel mRecipeStepModel;
     private OnActionListener mOnActionListener;
     private long mStartPosition;
+    private int mVideoHeight;
 
     public enum StepPosition {
         First,
@@ -63,12 +66,13 @@ public class RecipeStepDetailsFragment extends Fragment {
 
     // Steps position start from 0.
     public static RecipeStepDetailsFragment newInstance(RecipeStepModel model, StepPosition position,
-                                                        long start_position) {
+                                                        long start_position, int video_height) {
         RecipeStepDetailsFragment frag = new RecipeStepDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_MODEL_ARG, model);
         args.putString(RECIPE_STEP_POS_ARG, position.toString());
         args.putLong(VIDEO_POSITION, start_position);
+        args.putInt(VIDEO_HEIGHT_ARG, video_height);
 
         frag.setArguments(args);
         return frag;
@@ -83,6 +87,7 @@ public class RecipeStepDetailsFragment extends Fragment {
             mRecipeStepModel = args.getParcelable(RECIPE_STEP_MODEL_ARG);
             mStepPosition = StepPosition.valueOf(args.getString(RECIPE_STEP_POS_ARG));
             mStartPosition = args.getLong(VIDEO_POSITION);
+            mVideoHeight = args.getInt(VIDEO_HEIGHT_ARG);
         }
     }
 
@@ -110,14 +115,17 @@ public class RecipeStepDetailsFragment extends Fragment {
                     mOnActionListener.onButtonNextStepClicked();
                 }
             });
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mExoPlayerView.getLayoutParams();
+            params.height = mVideoHeight;
+            mExoPlayerView.setLayoutParams(params);
         } else {
             // Only the video player should be visible in landscape mode!
             mTVStepDescription.setVisibility(View.GONE);
             mBTNext.setVisibility(View.GONE);
             mBTPrev.setVisibility(View.GONE);
-            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mExoPlayerView.getLayoutParams();
-            params.width = ConstraintLayout.LayoutParams.MATCH_PARENT;
-            params.height = ConstraintLayout.LayoutParams.MATCH_PARENT;
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mExoPlayerView.getLayoutParams();
+            params.width = FrameLayout.LayoutParams.MATCH_PARENT;
+            params.height = FrameLayout.LayoutParams.MATCH_PARENT;
             mExoPlayerView.setLayoutParams(params);
             mExoPlayerView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
@@ -133,6 +141,8 @@ public class RecipeStepDetailsFragment extends Fragment {
         String video_url = mRecipeStepModel.getVideoURL();
         if (video_url != null && !video_url.isEmpty()) {
             initializePlayer(Uri.parse(video_url));
+        } else {
+            mTVNoVideo.setVisibility(View.VISIBLE);
         }
 
         return view;

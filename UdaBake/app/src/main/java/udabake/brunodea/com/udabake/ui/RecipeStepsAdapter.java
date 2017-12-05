@@ -41,7 +41,7 @@ public class RecipeStepsAdapter extends RecyclerView.Adapter<RecipeStepsAdapter.
         if (mRecipeStepModels != null && mInflater != null) {
             final RecipeStepModel model = mRecipeStepModels.get(position);
 
-            holder.mTVStepShort.setText(mContext.getString(R.string.step_short, position + 1,
+            holder.mTVStepShort.setText(mContext.getString(R.string.step_short, position,
                     model.getShortDescription()));
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

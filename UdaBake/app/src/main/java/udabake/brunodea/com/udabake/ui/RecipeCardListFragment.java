@@ -38,10 +38,6 @@ public class RecipeCardListFragment extends Fragment {
     @BindView(R.id.rv_recipes) RecyclerView mRVRecipes;
     @BindView(R.id.tv_message) TextView mTVMessage;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public RecipeCardListFragment() {
     }
 

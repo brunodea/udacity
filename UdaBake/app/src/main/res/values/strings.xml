@@ -11,4 +11,6 @@
     <string name="step_short">%d. %s</string>
     <string name="step_title">Step %d - %s</string>
     <string name="ingredients_title">Ingredients - %s</string>
+    <string name="no_step_video">Video not available.</string>
+
 </resources>

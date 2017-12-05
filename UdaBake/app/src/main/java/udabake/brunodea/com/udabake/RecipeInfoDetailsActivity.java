@@ -76,7 +76,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
         if (actionBar != null) {
             switch (mRecipeInfoToShow) {
                 case StepDetails: {
-                    actionBar.setTitle(getString(R.string.step_title, mCurrStep + 1, mRecipeModel.getName()));
+                    actionBar.setTitle(getString(R.string.step_title, mCurrStep, mRecipeModel.getName()));
                 } break;
                 case Ingredients: {
                     actionBar.setTitle(getString(R.string.ingredients_title, mRecipeModel.getName()));
@@ -127,7 +127,8 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
                                         RecipeStepDetailsFragment.StepPosition.Last :
                                         RecipeStepDetailsFragment.StepPosition.Other;
 
-                mStepDetailsFrag = RecipeStepDetailsFragment.newInstance(step, pos, mVideoPosition);
+                mStepDetailsFrag = RecipeStepDetailsFragment.newInstance(step, pos, mVideoPosition,
+                        (int) getResources().getDimension(R.dimen.video_portrait_height));
                 transaction.replace(R.id.frame_fragment_container, mStepDetailsFrag);
             } break;
             case Ingredients: {
