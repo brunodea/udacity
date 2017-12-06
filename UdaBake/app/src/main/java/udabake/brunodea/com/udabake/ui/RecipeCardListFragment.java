@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,10 @@ public class RecipeCardListFragment extends Fragment {
     public RecipeCardListFragment() {
     }
 
+    public static RecipeCardListFragment newInstance() {
+        return new RecipeCardListFragment();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +73,7 @@ public class RecipeCardListFragment extends Fragment {
         if (savedInstanceState != null && savedInstanceState.containsKey(RECIPES_PARCELABLE_KEY)) {
             ArrayList<RecipeModel> models = savedInstanceState.getParcelableArrayList(RECIPES_PARCELABLE_KEY);
             mRecipeItemAdapter.setRecipeModels(models);
-        } else {
+        } else if (getActivity() != null && isAdded()) {
             loadRecipesFromWeb();
         }
 
@@ -127,8 +132,7 @@ public class RecipeCardListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (isAdded())
-            outState.putParcelableArrayList(RECIPES_PARCELABLE_KEY, mRecipeItemAdapter.getRecipeModels());
+        outState.putParcelableArrayList(RECIPES_PARCELABLE_KEY, mRecipeItemAdapter.getRecipeModels());
         super.onSaveInstanceState(outState);
     }
 
