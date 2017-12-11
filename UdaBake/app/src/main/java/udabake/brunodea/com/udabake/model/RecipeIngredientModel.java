@@ -77,10 +77,10 @@ public class RecipeIngredientModel implements Parcelable {
 	@Override
  	public String toString(){
 		return 
-			"RecipeIngredientModel{" +
-			"quantity = '" + quantity + '\'' + 
-			",measure = '" + measure + '\'' + 
-			",ingredient = '" + ingredient + '\'' + 
+			"{" +
+			"quantity = " + quantity +
+			",measure = \"" + measure + '\"' +
+			",ingredient = \"" + ingredient + '\"' +
 			"}";
 		}
 }

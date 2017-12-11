@@ -1,11 +1,13 @@
 package udabake.brunodea.com.udabake.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +15,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.UdabakeUtil;
 import udabake.brunodea.com.udabake.model.RecipeModel;
+import udabake.brunodea.com.udabake.model.RecipeStepModel;
 
 /**
  * A fragment representing a list of Items.
@@ -28,6 +32,8 @@ import udabake.brunodea.com.udabake.model.RecipeModel;
  */
 public class RecipeCardListFragment extends Fragment {
     private static final String RECIPES_PARCELABLE_KEY = "recipes_parcelable";
+    public static final String SHARED_PREFS = "shared_prefs";
+    public static final String RECIPE_PREF_JSON = "recipe_model_json";
 
     private int mColumnCount = 1;
     private OnRecipeItemClickListener mOnRecipeItemClickListener;
@@ -75,7 +81,6 @@ public class RecipeCardListFragment extends Fragment {
         } else if (getActivity() != null && isAdded()) {
             loadRecipesFromWeb();
         }
-
         return view;
     }
 
@@ -102,6 +107,25 @@ public class RecipeCardListFragment extends Fragment {
                     mPBLoadingRecipes.setVisibility(View.GONE);
                     mRVRecipes.setVisibility(View.VISIBLE);
                     mTVMessage.setVisibility(View.GONE);
+
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("[");
+                    for (RecipeModel rm : mRecipeItemAdapter.getRecipeModels()) {
+                        List<RecipeStepModel> steps = rm.getSteps();
+                        rm.setSteps(new ArrayList<RecipeStepModel>());
+                        builder.append(rm.toString());
+                        builder.append(",");
+                        rm.setSteps(steps);
+                    }
+                    builder.append("]");
+                    String a = builder.toString();
+                    Log.d("bruno-test", a);
+                    SharedPreferences sp = getContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor sp_e = sp.edit();
+                    sp_e.putString(RECIPE_PREF_JSON, a);
+                    sp_e.apply();
+
                 }
             });
         } else {

@@ -103,12 +103,12 @@ public class RecipeStepModel implements Parcelable {
 	@Override
  	public String toString(){
 		return 
-			"RecipeStepModel{" +
-			"videoURL = '" + videoURL + '\'' + 
-			",description = '" + description + '\'' + 
-			",id = '" + id + '\'' + 
-			",shortDescription = '" + shortDescription + '\'' + 
-			",thumbnailURL = '" + thumbnailURL + '\'' + 
+			"{" +
+			"videoURL = \"" + videoURL + '\"' +
+			",description = \"" + description.replace("\"", "\'") + '\"' +
+			",id = " + id +
+			",shortDescription = \"" + shortDescription.replace("\"", "\'") + '\"' +
+			",thumbnailURL = \"" + thumbnailURL + '\"' +
 			"}";
 		}
 }

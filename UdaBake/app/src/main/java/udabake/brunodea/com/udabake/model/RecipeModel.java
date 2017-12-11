@@ -120,14 +120,27 @@ public class RecipeModel implements Parcelable {
 
 	@Override
  	public String toString(){
-		return 
-			"RecipeModel{" +
-			"image = '" + image + '\'' + 
-			",servings = '" + servings + '\'' + 
-			",name = '" + name + '\'' + 
-			",ingredients = '" + ingredients + '\'' + 
-			",id = '" + id + '\'' + 
-			",steps = '" + steps + '\'' + 
+	    StringBuilder stringBuilderIngredients = new StringBuilder();
+	    stringBuilderIngredients.append("[");
+		for (RecipeIngredientModel m : ingredients) {
+			stringBuilderIngredients.append(m.toString() + ",");
+		}
+		stringBuilderIngredients.append("]");
+
+		StringBuilder stringBuilderSteps = new StringBuilder();
+		stringBuilderSteps.append("[");
+		for (RecipeStepModel m : steps) {
+			stringBuilderSteps.append(m.toString() + ",");
+		}
+		stringBuilderSteps.append("]");
+		return
+			"{" +
+			"image = \"" + image + '\"' +
+			",servings = " + servings +
+			",name = \"" + name + '\"' +
+			",ingredients = " + stringBuilderIngredients.toString() +
+			",id = " + id +
+			",steps = " + stringBuilderSteps.toString() +
 			"}";
 		}
 }
