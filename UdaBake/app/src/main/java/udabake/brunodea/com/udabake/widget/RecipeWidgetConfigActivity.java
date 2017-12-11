@@ -53,7 +53,7 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
                     SharedPreferences sp = getSharedPreferences(WIDGET_SHARED_PREFS, MODE_PRIVATE);
                     SharedPreferences.Editor sp_e = sp.edit();
                     recipe.setSteps(new ArrayList<RecipeStepModel>());
-                    sp_e.putString(WIDGET_RECIPE_MODEL, recipe.toString());
+                    sp_e.putString(WIDGET_RECIPE_MODEL + "_" + mAppWidgetId, recipe.toString());
                     sp_e.apply();
 
                     Intent resultValue = new Intent();

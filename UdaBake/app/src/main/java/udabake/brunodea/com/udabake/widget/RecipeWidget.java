@@ -19,9 +19,10 @@ public class RecipeWidget extends AppWidgetProvider {
                                 int appWidgetId) {
         SharedPreferences sp = context.getSharedPreferences(RecipeWidgetConfigActivity.WIDGET_SHARED_PREFS,
                 Context.MODE_PRIVATE);
-        if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL)) {
+        if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId)) {
+            String s = sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId, "");
             Gson gson = new Gson();
-            RecipeModel rm = gson.fromJson(sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL, ""), RecipeModel.class);
+            RecipeModel rm = gson.fromJson(s, RecipeModel.class);
 
             Intent intent = new Intent(context, RecipeWidgetViewsService.class);
             intent.putExtra(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL, rm);

@@ -20,6 +20,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
     public static String RECIPE_IS_INGREDIENTS_EXTRA = "recipe_is_ingredients_extra";
 
     private static String VIDEO_POSITION = "video_position";
+    private static String VIDEO_PLAYING = "video_playing";
 
     private RecipeModel mRecipeModel;
     private RecipeStepDetailsFragment mStepDetailsFrag;
@@ -27,6 +28,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
     private int mCurrStep;
     private int mNumSteps;
     private long mVideoPosition;
+    private boolean mVideoIsPlaying;
 
     enum RecipeInfoToShow {
         StepDetails,
@@ -59,8 +61,11 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
                     mCurrStep = intent.getIntExtra(RECIPE_STEP_POS, 0);
                 }
 
-                if (savedInstanceState != null && savedInstanceState.containsKey(VIDEO_POSITION)) {
-                    mVideoPosition = savedInstanceState.getLong(VIDEO_POSITION);
+                if (savedInstanceState != null) {
+                    if (savedInstanceState.containsKey(VIDEO_POSITION)) {
+                        mVideoPosition = savedInstanceState.getLong(VIDEO_POSITION);
+                    }
+                    mVideoIsPlaying = savedInstanceState.getBoolean(VIDEO_PLAYING);
                 } else {
                     mVideoPosition = 0;
                 }
@@ -107,6 +112,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
             case StepDetails: {
                 outState.putInt(RECIPE_STEP_POS, mCurrStep);
                 outState.putLong(VIDEO_POSITION, mStepDetailsFrag.videoPosition());
+                outState.putBoolean(VIDEO_PLAYING, mStepDetailsFrag.isVideoPlaying());
             } break;
             case Ingredients: break;
         }
@@ -128,7 +134,7 @@ public class RecipeInfoDetailsActivity extends AppCompatActivity
                                         RecipeStepDetailsFragment.StepPosition.Other;
 
                 mStepDetailsFrag = RecipeStepDetailsFragment.newInstance(step, pos, mVideoPosition,
-                        (int) getResources().getDimension(R.dimen.video_portrait_height));
+                        (int) getResources().getDimension(R.dimen.video_portrait_height), mVideoIsPlaying);
                 transaction.replace(R.id.frame_fragment_container, mStepDetailsFrag);
             } break;
             case Ingredients: {

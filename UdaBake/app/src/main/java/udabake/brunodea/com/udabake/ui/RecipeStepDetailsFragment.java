@@ -39,6 +39,7 @@ public class RecipeStepDetailsFragment extends Fragment {
     private static final String RECIPE_STEP_POS_ARG = "recipe_step_pos_arg";
     private static final String VIDEO_POSITION = "start_video_position";
     private static final String VIDEO_HEIGHT_ARG = "video_height";
+    private static final String VIDEO_IS_PLAYING = "video_is_playing";
 
     @BindView(R.id.tv_step_description) TextView mTVStepDescription;
     @BindView(R.id.bt_next_step) Button mBTNext;
@@ -52,6 +53,7 @@ public class RecipeStepDetailsFragment extends Fragment {
     private OnActionListener mOnActionListener;
     private long mStartPosition;
     private int mVideoHeight;
+    private boolean mStartPlaying;
 
     public enum StepPosition {
         First,
@@ -66,13 +68,14 @@ public class RecipeStepDetailsFragment extends Fragment {
 
     // Steps position start from 0.
     public static RecipeStepDetailsFragment newInstance(RecipeStepModel model, StepPosition position,
-                                                        long start_position, int video_height) {
+                                                        long start_position, int video_height, boolean start_playing) {
         RecipeStepDetailsFragment frag = new RecipeStepDetailsFragment();
         Bundle args = new Bundle();
         args.putParcelable(RECIPE_STEP_MODEL_ARG, model);
         args.putString(RECIPE_STEP_POS_ARG, position.toString());
         args.putLong(VIDEO_POSITION, start_position);
         args.putInt(VIDEO_HEIGHT_ARG, video_height);
+        args.putBoolean(VIDEO_IS_PLAYING, start_playing);
 
         frag.setArguments(args);
         return frag;
@@ -88,6 +91,7 @@ public class RecipeStepDetailsFragment extends Fragment {
             mStepPosition = StepPosition.valueOf(args.getString(RECIPE_STEP_POS_ARG));
             mStartPosition = args.getLong(VIDEO_POSITION);
             mVideoHeight = args.getInt(VIDEO_HEIGHT_ARG);
+            mStartPlaying = args.getBoolean(VIDEO_IS_PLAYING);
         }
     }
 
@@ -128,12 +132,12 @@ public class RecipeStepDetailsFragment extends Fragment {
             params.height = FrameLayout.LayoutParams.MATCH_PARENT;
             mExoPlayerView.setLayoutParams(params);
             mExoPlayerView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |// hide nav bar
-                View.SYSTEM_UI_FLAG_FULLSCREEN |// hide status bar
-                View.SYSTEM_UI_FLAG_IMMERSIVE
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |// hide nav bar
+                            View.SYSTEM_UI_FLAG_FULLSCREEN |// hide status bar
+                            View.SYSTEM_UI_FLAG_IMMERSIVE
             );
         }
 
@@ -164,6 +168,7 @@ public class RecipeStepDetailsFragment extends Fragment {
             MediaSource videoSource = new ExtractorMediaSource(mediaUri, dataSourceFactory,
                     extractorsFactory, null, null);
             mExoPlayer.prepare(videoSource);
+            mExoPlayer.setPlayWhenReady(mStartPlaying);
             mExoPlayer.seekTo(mStartPosition);
             mExoPlayerView.setPlayer(mExoPlayer);
         }
@@ -180,6 +185,11 @@ public class RecipeStepDetailsFragment extends Fragment {
     public long videoPosition() {
         if (!isAdded()) return 0;
         return mExoPlayer.getCurrentPosition();
+    }
+
+    public boolean isVideoPlaying() {
+        if (!isAdded()) return false;
+        return mExoPlayer.getPlayWhenReady();
     }
 
     @Override

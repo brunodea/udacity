@@ -87,7 +87,8 @@ public class RecipeDetailsActivity extends AppCompatActivity
                             mRecipeModel.getSteps().get(mCurrStep),
                             pos,
                             0,
-                            (int) getResources().getDimension(R.dimen.video_portrait_height_tablet)
+                            (int) getResources().getDimension(R.dimen.video_portrait_height_tablet),
+                            false
                     )
             );
         }
