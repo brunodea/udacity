@@ -15,6 +15,7 @@ public class RecipeDetailsActivity extends AppCompatActivity
         implements RecipeStepsListFragment.OnActionClickListener,
         RecipeStepDetailsFragment.OnActionListener {
     public static final String RECIPE_MODEL_EXTRA = "recipe_model_extra";
+    public static final String RECIPE_CURR_STEP = "curr_step";
 
     private boolean mIsMultiPane;
     private int mCurrStep;
@@ -26,7 +27,7 @@ public class RecipeDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_recipe_details);
 
         mIsMultiPane = false;
-        mCurrStep = 0;
+        mCurrStep = savedInstanceState != null ? savedInstanceState.getInt(RECIPE_CURR_STEP, 0) : 0;
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(RECIPE_MODEL_EXTRA)) {
             mRecipeModel = intent.getParcelableExtra(RECIPE_MODEL_EXTRA);
@@ -43,6 +44,11 @@ public class RecipeDetailsActivity extends AppCompatActivity
 
             transaction.commit();
         }
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(RECIPE_CURR_STEP, mCurrStep);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
