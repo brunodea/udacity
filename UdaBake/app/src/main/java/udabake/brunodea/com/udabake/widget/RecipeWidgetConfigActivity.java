@@ -2,21 +2,26 @@ package udabake.brunodea.com.udabake.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeModel;
+import udabake.brunodea.com.udabake.model.RecipeStepModel;
 import udabake.brunodea.com.udabake.ui.RecipeCardListFragment;
 import udabake.brunodea.com.udabake.ui.RecipeItemAdapter;
 
 import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 
 public class RecipeWidgetConfigActivity extends AppCompatActivity {
-    public static String EXTRA_RECIPE_PARCELABLE = "recipe_parcelable";
+    public static String WIDGET_RECIPE_MODEL = "recipe_model_widget";
+    public static String WIDGET_SHARED_PREFS = "widget_shared_prefs";
     private int mAppWidgetId;
 
     @BindView(R.id.rv_widget_recipes) RecyclerView mRVWidgetRecipes;
@@ -45,9 +50,14 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
             RecipeItemAdapter adapter = new RecipeItemAdapter(new RecipeCardListFragment.OnRecipeItemClickListener() {
                 @Override
                 public void onClickRecipeItem(RecipeModel recipe) {
+                    SharedPreferences sp = getSharedPreferences(WIDGET_SHARED_PREFS, MODE_PRIVATE);
+                    SharedPreferences.Editor sp_e = sp.edit();
+                    recipe.setSteps(new ArrayList<RecipeStepModel>());
+                    sp_e.putString(WIDGET_RECIPE_MODEL, recipe.toString());
+                    sp_e.apply();
+
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    resultValue.putExtra(EXTRA_RECIPE_PARCELABLE, recipe);
                     setResult(RESULT_OK);
                     finish();
                 }

@@ -4,18 +4,33 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
+import com.google.gson.Gson;
+
 import udabake.brunodea.com.udabake.R;
+import udabake.brunodea.com.udabake.model.RecipeModel;
 
 public class RecipeWidget extends AppWidgetProvider {
+    private RecipeModel mRecipeModel;
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list);
-        views.setTextViewText(R.id.tv_widget_recipe_name, "TEST some Recipe");
-        Intent intent = new Intent(context, RecipeWidgetViewsService.class);
-        views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+        SharedPreferences sp = context.getSharedPreferences(RecipeWidgetConfigActivity.WIDGET_SHARED_PREFS,
+                Context.MODE_PRIVATE);
+        if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL)) {
+            Gson gson = new Gson();
+            RecipeModel rm = gson.fromJson(sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL, ""), RecipeModel.class);
+
+            Intent intent = new Intent(context, RecipeWidgetViewsService.class);
+            intent.putExtra(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL, rm);
+
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list);
+            views.setTextViewText(R.id.tv_widget_recipe_name, rm.getName());
+            views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
+            appWidgetManager.updateAppWidget(appWidgetId, views);
+        }
     }
 
     @Override
