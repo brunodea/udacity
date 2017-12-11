@@ -9,10 +9,10 @@ import android.widget.RemoteViews;
 import udabake.brunodea.com.udabake.R;
 
 public class RecipeWidget extends AppWidgetProvider {
-
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list);
+        views.setTextViewText(R.id.tv_widget_recipe_name, "TEST some Recipe");
         Intent intent = new Intent(context, RecipeWidgetViewsService.class);
         views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
         appWidgetManager.updateAppWidget(appWidgetId, views);

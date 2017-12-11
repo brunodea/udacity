@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,7 +119,6 @@ public class RecipeCardListFragment extends Fragment {
                     }
                     builder.append("]");
                     String a = builder.toString();
-                    Log.d("bruno-test", a);
                     SharedPreferences sp = getContext().getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE);
                     SharedPreferences.Editor sp_e = sp.edit();
                     sp_e.putString(RECIPE_PREF_JSON, a);

@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,10 +37,9 @@ public class RecipeWidgetViewsFactory implements RemoteViewsService.RemoteViewsF
         if (sp != null && sp.contains(RecipeCardListFragment.RECIPE_PREF_JSON)) {
             String recipes_json = sp.getString(RecipeCardListFragment.RECIPE_PREF_JSON, "");
             Log.d("bruno-test", recipes_json);
-            Type listType = new TypeToken<List<RecipeModel>>(){}.getType();
+            Type listType = new TypeToken<ArrayList<RecipeModel>>(){}.getType();
             Gson gson = new Gson();
-            List<RecipeModel> list = (List<RecipeModel>) gson.fromJson(recipes_json, listType);
-            mRecipeModels.addAll(list);
+            mRecipeModels = (ArrayList<RecipeModel>) gson.fromJson(recipes_json, listType);
         } else {
             RecipesAPI.getRecipes(new Callback<ArrayList<RecipeModel>>() {
                 @Override
