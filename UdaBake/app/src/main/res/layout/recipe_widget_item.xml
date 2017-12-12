@@ -9,14 +9,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:gravity="start"
+        android:textSize="24sp" />
     <TextView
         android:id="@+id/tv_ingredient_meas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
+        android:gravity="end"
         android:textSize="24sp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold" />
 
 </LinearLayout>

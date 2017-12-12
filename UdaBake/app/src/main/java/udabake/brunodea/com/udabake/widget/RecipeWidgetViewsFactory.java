@@ -1,9 +1,12 @@
 package udabake.brunodea.com.udabake.widget;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.widget.AdapterView;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
+
+import com.google.gson.Gson;
 
 import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeIngredientModel;
@@ -13,14 +16,23 @@ public class RecipeWidgetViewsFactory implements RemoteViewsService.RemoteViewsF
     private Context mContext;
     private RecipeModel mRecipeModel;
 
-    public RecipeWidgetViewsFactory(Context appContext, RecipeModel model) {
+    public RecipeWidgetViewsFactory(Context appContext, RecipeModel model, int widget_id) {
         mContext = appContext;
         mRecipeModel = model;
+        if (mRecipeModel == null) {
+            SharedPreferences sp = appContext.getSharedPreferences(RecipeWidgetConfigActivity.WIDGET_SHARED_PREFS,
+                    Context.MODE_PRIVATE);
+            if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + widget_id)) {
+                RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_list);
+                String s = sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + widget_id, "");
+                Gson gson = new Gson();
+                mRecipeModel = gson.fromJson(s, RecipeModel.class);
+            }
+        }
     }
 
     @Override
     public void onCreate() {
-
     }
 
     @Override
@@ -47,7 +59,7 @@ public class RecipeWidgetViewsFactory implements RemoteViewsService.RemoteViewsF
 
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_item);
         rv.setTextViewText(R.id.tv_ingredient_name, rim.getIngredient());
-        rv.setTextViewText(R.id.tv_ingredient_meas, "" + rim.getIngredient() + " " + rim.getMeasure());
+        rv.setTextViewText(R.id.tv_ingredient_meas, "" + rim.getQuantity() + " " + rim.getMeasure());
 
         return rv;
     }

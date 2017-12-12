@@ -13,25 +13,25 @@ import udabake.brunodea.com.udabake.R;
 import udabake.brunodea.com.udabake.model.RecipeModel;
 
 public class RecipeWidget extends AppWidgetProvider {
-    private RecipeModel mRecipeModel;
-
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    public static final String WIDGET_RECIPE_MODEL = "widget_recipe_model";
+    private void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         SharedPreferences sp = context.getSharedPreferences(RecipeWidgetConfigActivity.WIDGET_SHARED_PREFS,
                 Context.MODE_PRIVATE);
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list);
+        Intent intent = new Intent(context, RecipeWidgetViewsService.class);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
         if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId)) {
             String s = sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId, "");
             Gson gson = new Gson();
             RecipeModel rm = gson.fromJson(s, RecipeModel.class);
 
-            Intent intent = new Intent(context, RecipeWidgetViewsService.class);
-            intent.putExtra(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL, rm);
-
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.recipe_widget_list);
+            intent.putExtra(WIDGET_RECIPE_MODEL, rm);
             views.setTextViewText(R.id.tv_widget_recipe_name, rm.getName());
-            views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
-            appWidgetManager.updateAppWidget(appWidgetId, views);
+
         }
+        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     @Override

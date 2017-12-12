@@ -20,8 +20,8 @@ import udabake.brunodea.com.udabake.ui.RecipeItemAdapter;
 import static android.appwidget.AppWidgetManager.INVALID_APPWIDGET_ID;
 
 public class RecipeWidgetConfigActivity extends AppCompatActivity {
-    public static String WIDGET_RECIPE_MODEL = "recipe_model_widget";
-    public static String WIDGET_SHARED_PREFS = "widget_shared_prefs";
+    public static final String WIDGET_RECIPE_MODEL = "recipe_model_widget";
+    public static final String WIDGET_SHARED_PREFS = "widget_shared_prefs";
     private int mAppWidgetId;
 
     @BindView(R.id.rv_widget_recipes) RecyclerView mRVWidgetRecipes;
@@ -58,7 +58,7 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
 
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    setResult(RESULT_OK);
+                    setResult(RESULT_OK, resultValue);
                     finish();
                 }
             });
