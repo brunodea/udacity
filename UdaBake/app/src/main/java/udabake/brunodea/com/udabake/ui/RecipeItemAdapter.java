@@ -1,5 +1,7 @@
 package udabake.brunodea.com.udabake.ui;
 
+import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import udabake.brunodea.com.udabake.R;
+import udabake.brunodea.com.udabake.UdabakeUtil;
 import udabake.brunodea.com.udabake.model.RecipeModel;
 import udabake.brunodea.com.udabake.net.RecipesAPI;
 
@@ -30,10 +33,12 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
     private final RecipeCardListFragment.OnRecipeItemClickListener mOnRecipeItemClickListener;
 
     private LayoutInflater mInflater;
+    private Context mContext;
 
-    public RecipeItemAdapter(RecipeCardListFragment.OnRecipeItemClickListener listener) {
+    public RecipeItemAdapter(Context context, RecipeCardListFragment.OnRecipeItemClickListener listener) {
         mOnRecipeItemClickListener = listener;
         mRecipeModels = null;
+        mContext = context;
     }
 
     public void setRecipeModels(ArrayList<RecipeModel> recipes) {
@@ -86,6 +91,12 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
             // TODO: set all other holder stuff base on mRecipeModels.get(position).
             final RecipeModel model = mRecipeModels.get(position);
 
+            if (!UdabakeUtil.isLandscape(mContext) && !UdabakeUtil.isTablet(mContext)) {
+                ViewGroup.LayoutParams params = holder.mCardView.getLayoutParams();
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                holder.mCardView.setLayoutParams(params);
+            }
+
             holder.mRecipeModel = model;
             RecipesAPI.downloadImageToView(
                     mInflater.getContext(),
@@ -116,6 +127,7 @@ public class RecipeItemAdapter extends RecyclerView.Adapter<RecipeItemAdapter.Vi
 
         @BindView(R.id.iv_recipe_item_image) ImageView mRecipeImage;
         @BindView(R.id.tv_recipe_item_name) TextView mRecipeName;
+        @BindView(R.id.cv_recipe) CardView mCardView;
 
         public ViewHolder(View view) {
             super(view);

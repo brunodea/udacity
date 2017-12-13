@@ -56,7 +56,7 @@ public class RecipeCardListFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_recipe_card_item_list, container, false);
         ButterKnife.bind(this, view);
 
-        mRecipeItemAdapter = new RecipeItemAdapter(mOnRecipeItemClickListener);
+        mRecipeItemAdapter = new RecipeItemAdapter(getContext(), mOnRecipeItemClickListener);
 
         if (UdabakeUtil.isTablet(getContext())) {
             mColumnCount = UdabakeUtil.isLandscape(getContext()) ? 5 : 4;

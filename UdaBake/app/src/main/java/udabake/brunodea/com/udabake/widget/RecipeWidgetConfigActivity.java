@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import udabake.brunodea.com.udabake.R;
+import udabake.brunodea.com.udabake.UdabakeUtil;
 import udabake.brunodea.com.udabake.model.RecipeModel;
 import udabake.brunodea.com.udabake.model.RecipeStepModel;
 import udabake.brunodea.com.udabake.ui.RecipeCardListFragment;
@@ -47,7 +50,7 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
         } else {
             setContentView(R.layout.activity_recipe_widget_config);
             ButterKnife.bind(this);
-            RecipeItemAdapter adapter = new RecipeItemAdapter(new RecipeCardListFragment.OnRecipeItemClickListener() {
+            RecipeItemAdapter adapter = new RecipeItemAdapter(this, new RecipeCardListFragment.OnRecipeItemClickListener() {
                 @Override
                 public void onClickRecipeItem(RecipeModel recipe) {
                     SharedPreferences sp = getSharedPreferences(WIDGET_SHARED_PREFS, MODE_PRIVATE);
@@ -79,6 +82,16 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
                 }
             });
             mRVWidgetRecipes.setAdapter(adapter);
+            int columns = 1;
+            if (UdabakeUtil.isTablet(this)) {
+                columns = UdabakeUtil.isLandscape(this) ? 5 : 4;
+            }
+            if (columns <= 1) {
+                mRVWidgetRecipes.setLayoutManager(new LinearLayoutManager(this));
+            } else {
+                mRVWidgetRecipes.setLayoutManager(new GridLayoutManager(this, columns));
+            }
+            mRVWidgetRecipes.setHasFixedSize(true);
         }
     }
 }

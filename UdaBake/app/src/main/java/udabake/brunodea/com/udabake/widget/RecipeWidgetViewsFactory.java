@@ -23,10 +23,11 @@ public class RecipeWidgetViewsFactory implements RemoteViewsService.RemoteViewsF
             SharedPreferences sp = appContext.getSharedPreferences(RecipeWidgetConfigActivity.WIDGET_SHARED_PREFS,
                     Context.MODE_PRIVATE);
             if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + widget_id)) {
-                RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_list);
                 String s = sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + widget_id, "");
                 Gson gson = new Gson();
                 mRecipeModel = gson.fromJson(s, RecipeModel.class);
+                RemoteViews views = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_list);
+                views.setTextViewText(R.id.tv_widget_recipe_name, mRecipeModel.getName());
             }
         }
     }
@@ -51,15 +52,20 @@ public class RecipeWidgetViewsFactory implements RemoteViewsService.RemoteViewsF
 
     @Override
     public RemoteViews getViewAt(int position) {
-        if (position == AdapterView.INVALID_POSITION || mRecipeModel.getIngredients().size() == 0) {
+        if (position == AdapterView.INVALID_POSITION || mRecipeModel == null ||
+                mRecipeModel.getIngredients().size() == 0) {
             return null;
         }
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_item);
 
         RecipeIngredientModel rim = mRecipeModel.getIngredients().get(position);
-
-        RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.recipe_widget_item);
-        rv.setTextViewText(R.id.tv_ingredient_name, rim.getIngredient());
-        rv.setTextViewText(R.id.tv_ingredient_meas, "" + rim.getQuantity() + " " + rim.getMeasure());
+        if (rim != null) {
+            String s = rim.getIngredient();
+            if (s != null && !s.isEmpty()) {
+                rv.setTextViewText(R.id.tv_ingredient_name, rim.getIngredient());
+            }
+            rv.setTextViewText(R.id.tv_ingredient_meas, "" + rim.getQuantity() + " " + rim.getMeasure());
+        }
 
         return rv;
     }
