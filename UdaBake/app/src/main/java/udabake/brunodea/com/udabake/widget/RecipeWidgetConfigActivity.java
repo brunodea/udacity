@@ -59,6 +59,7 @@ public class RecipeWidgetConfigActivity extends AppCompatActivity {
                     sp_e.putString(WIDGET_RECIPE_MODEL + "_" + mAppWidgetId, recipe.toString());
                     sp_e.apply();
 
+
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);

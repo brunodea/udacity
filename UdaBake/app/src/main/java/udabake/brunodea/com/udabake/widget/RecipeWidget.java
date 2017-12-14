@@ -7,10 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.RemoteViews;
 
-import com.google.gson.Gson;
-
 import udabake.brunodea.com.udabake.R;
-import udabake.brunodea.com.udabake.model.RecipeModel;
 
 public class RecipeWidget extends AppWidgetProvider {
     public static final String WIDGET_RECIPE_MODEL = "widget_recipe_model";
@@ -22,15 +19,6 @@ public class RecipeWidget extends AppWidgetProvider {
         Intent intent = new Intent(context, RecipeWidgetViewsService.class);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         views.setRemoteAdapter(R.id.lv_widget_ingredients, intent);
-        if (sp != null && sp.contains(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId)) {
-            String s = sp.getString(RecipeWidgetConfigActivity.WIDGET_RECIPE_MODEL + "_" + appWidgetId, "");
-            Gson gson = new Gson();
-            RecipeModel rm = gson.fromJson(s, RecipeModel.class);
-
-            intent.putExtra(WIDGET_RECIPE_MODEL, rm);
-            views.setTextViewText(R.id.tv_widget_recipe_name, rm.getName());
-
-        }
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
