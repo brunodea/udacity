@@ -9,6 +9,12 @@ import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
 public class RecipeStepModel implements Parcelable {
+	public RecipeStepModel(int id, String videoURL, String description, String short_descr) {
+		setId(id);
+		setVideoURL(videoURL);
+		setDescription(description);
+		setShortDescription(short_descr);
+	}
 
 	public RecipeStepModel(Parcel in) {
 	    videoURL = in.readString();

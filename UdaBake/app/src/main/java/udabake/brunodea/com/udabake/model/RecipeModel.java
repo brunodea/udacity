@@ -12,6 +12,12 @@ import javax.annotation.Generated;
 
 @Generated("com.robohorse.robopojogenerator")
 public class RecipeModel implements Parcelable {
+    public RecipeModel(int id, String name, String image, int servings) {
+        setId(id);
+        setName(name);
+        setImage(image);
+        setServings(servings);
+    }
 
     public RecipeModel(Parcel in) {
         image = in.readString();
