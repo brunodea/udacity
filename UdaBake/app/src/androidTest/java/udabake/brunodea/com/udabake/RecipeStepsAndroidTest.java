@@ -37,7 +37,7 @@ public class RecipeStepsAndroidTest {
 
     @Rule
     public ActivityTestRule<RecipeDetailsActivity> mRecipeDetailsActivityRule =
-            new ActivityTestRule<>(RecipeDetailsActivity.class, false, true);
+            new ActivityTestRule<>(RecipeDetailsActivity.class, false, false);
 
     @Before
     public void configureTestRecipe() {
@@ -48,6 +48,7 @@ public class RecipeStepsAndroidTest {
                     "Fake short step description for step " + i));
         }
         mRecipeModelTest = new RecipeModel(0, "Fake Recipe", "", 3);
+        mRecipeModelTest.setSteps(steps);
     }
 
     @Test

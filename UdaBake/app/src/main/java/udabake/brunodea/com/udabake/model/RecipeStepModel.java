@@ -33,7 +33,7 @@ public class RecipeStepModel implements Parcelable {
 	    parcel.writeString(thumbnailURL);
 	}
 
-	static final Parcelable.Creator<RecipeStepModel> CREATOR
+	public static final Parcelable.Creator<RecipeStepModel> CREATOR
 			= new Parcelable.Creator<RecipeStepModel>() {
 		@Override
 		public RecipeStepModel createFromParcel(Parcel parcel) {

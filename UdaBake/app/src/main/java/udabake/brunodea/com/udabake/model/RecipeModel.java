@@ -40,7 +40,7 @@ public class RecipeModel implements Parcelable {
         parcel.writeTypedList(steps);
     }
 
-    static final Parcelable.Creator<RecipeModel> CREATOR
+    public static final Parcelable.Creator<RecipeModel> CREATOR
             = new Parcelable.Creator<RecipeModel>() {
         @Override
         public RecipeModel createFromParcel(Parcel parcel) {

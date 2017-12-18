@@ -23,7 +23,7 @@ public class RecipeIngredientModel implements Parcelable {
 		parcel.writeString(ingredient);
 	}
 
-	static final Parcelable.Creator<RecipeIngredientModel> CREATOR
+	public static final Parcelable.Creator<RecipeIngredientModel> CREATOR
 			= new Parcelable.Creator<RecipeIngredientModel>() {
 		@Override
 		public RecipeIngredientModel createFromParcel(Parcel parcel) {
