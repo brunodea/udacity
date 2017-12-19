@@ -203,12 +203,12 @@ public class RecipeStepDetailsFragment extends Fragment {
     }
 
     public long videoPosition() {
-        if (!isAdded()) return 0;
+        if (!isAdded() || mExoPlayer == null) return 0;
         return mExoPlayer.getCurrentPosition();
     }
 
     public boolean isVideoPlaying() {
-        if (!isAdded()) return false;
+        if (!isAdded() || mExoPlayer == null) return false;
         return mExoPlayer.getPlayWhenReady();
     }
 
