@@ -13,6 +13,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/iv_recipe_thumbnail"
+            android:visibility="gone"
+            android:contentDescription="@string/recipe_thumb_desc"
+            android:background="@android:color/black"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/video_portrait_height" />
+
         <com.google.android.exoplayer2.ui.SimpleExoPlayerView
             android:id="@+id/exo_player_view"
             android:layout_width="match_parent"

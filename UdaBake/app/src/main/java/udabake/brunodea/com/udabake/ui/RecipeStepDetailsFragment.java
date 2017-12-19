@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -27,6 +28,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +47,7 @@ public class RecipeStepDetailsFragment extends Fragment {
     @BindView(R.id.bt_next_step) Button mBTNext;
     @BindView(R.id.bt_previous_step) Button mBTPrev;
     @BindView(R.id.tv_no_video) TextView mTVNoVideo;
+    @BindView(R.id.iv_recipe_thumbnail) ImageView mIVRecipeThumbnail;
 
     @BindView(R.id.exo_player_view) SimpleExoPlayerView mExoPlayerView;
     private SimpleExoPlayer mExoPlayer;
@@ -139,14 +142,31 @@ public class RecipeStepDetailsFragment extends Fragment {
                             View.SYSTEM_UI_FLAG_FULLSCREEN |// hide status bar
                             View.SYSTEM_UI_FLAG_IMMERSIVE
             );
+            mIVRecipeThumbnail.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                            View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+                            View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                            View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |// hide nav bar
+                            View.SYSTEM_UI_FLAG_FULLSCREEN |// hide status bar
+                            View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
 
         // ExoPlayer exists in all orientations.
         String video_url = mRecipeStepModel.getVideoURL();
+        String thumb_url = mRecipeStepModel.getThumbnailURL();
         if (video_url != null && !video_url.isEmpty()) {
             initializePlayer(Uri.parse(video_url));
         } else {
-            mTVNoVideo.setVisibility(View.VISIBLE);
+            if (thumb_url != null && thumb_url.isEmpty()) {
+                thumb_url = "http://invalid_url.com";
+            }
+            Picasso.with(getContext())
+                    .load(thumb_url)
+                    .error(R.drawable.recipe_thumb_error)
+                    .into(mIVRecipeThumbnail);
+            mIVRecipeThumbnail.setVisibility(View.VISIBLE);
+            mExoPlayerView.setVisibility(View.GONE);
+            //mTVNoVideo.setVisibility(View.VISIBLE);
         }
 
         return view;
@@ -201,6 +221,17 @@ public class RecipeStepDetailsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
+    }
+
+    @Override
+    public void onStop() {
+        releasePlayer();
+        super.onStop();
+    }
+    @Override
+    public void onPause() {
+        releasePlayer();
+        super.onPause();
     }
 
     @Override
