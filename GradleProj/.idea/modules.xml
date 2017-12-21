@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GradleProj.iml" filepath="$PROJECT_DIR$/GradleProj.iml" />
       <module fileurl="file://$PROJECT_DIR$/JokesLib/JokesLib.iml" filepath="$PROJECT_DIR$/JokesLib/JokesLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/androidjokeslib/androidjokeslib.iml" filepath="$PROJECT_DIR$/androidjokeslib/androidjokeslib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/backend/backend.iml" filepath="$PROJECT_DIR$/backend/backend.iml" />
     </modules>
